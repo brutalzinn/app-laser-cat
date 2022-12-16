@@ -1,3 +1,4 @@
+import 'package:app_laser_cat/joystick_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -33,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
   final _channel = WebSocketChannel.connect(
-    Uri.parse('wss://echo.websocket.events'),
+    Uri.parse('ws://192.168.0.32:666'),
   );
 
   @override
@@ -44,23 +45,29 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Form(
-              child: TextFormField(
-                controller: _controller,
-                decoration: const InputDecoration(labelText: 'Send a message'),
+        child: JoystickWidget(
+          callBack: ((foo) {
+            print('${foo.x} ${foo.y}');
+
+            _channel.sink.add('${foo.x},${foo.y}');
+          }),
+          child: Column(
+            children: [
+              Form(
+                child: TextFormField(
+                  controller: _controller,
+                  decoration:
+                      const InputDecoration(labelText: 'Send a message'),
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            StreamBuilder(
-              stream: _channel.stream,
-              builder: (context, snapshot) {
-                return Text(snapshot.hasData ? '${snapshot.data}' : '');
-              },
-            )
-          ],
+              StreamBuilder(
+                stream: _channel.stream,
+                builder: (context, snapshot) {
+                  return Text(snapshot.hasData ? '${snapshot.data}' : '');
+                },
+              )
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

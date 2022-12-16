@@ -18,9 +18,9 @@ void setup()
     Serial.println(WiFi.localIP());
 
     sockServer.begin();
-
-    void loop()
-    {
+}
+void loop()
+{
         WiFiClient client = sockServer.available();
         if (client)
         {
@@ -35,4 +35,4 @@ void setup()
             }
             client.stop();
         }
-    }
+}
