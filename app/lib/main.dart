@@ -2,6 +2,8 @@ import 'package:app_laser_cat/joystick_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import 'utils.dart';
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -33,9 +35,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
-  final _channel = WebSocketChannel.connect(
-    Uri.parse('ws://192.168.0.32:666'),
-  );
+  late WebSocketChannel _channel;
+
+  _MyHomePageState() {
+    var ip = scanEspAddress(7777);
+    _channel = WebSocketChannel.connect(Uri.parse('ws://$ip:7777'));
+  }
 
   @override
   Widget build(BuildContext context) {
