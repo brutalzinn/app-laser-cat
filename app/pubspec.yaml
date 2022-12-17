@@ -39,6 +39,7 @@ dependencies:
   flutter_joystick: ^0.0.2
   web_socket_channel: ^2.2.0
   network_info_plus: ^3.0.1
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

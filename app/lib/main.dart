@@ -35,11 +35,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
-  late WebSocketChannel _channel;
+  WebSocketChannel? _channel;
 
   _MyHomePageState() {
-    var ip = scanEspAddress(7777);
-    _channel = WebSocketChannel.connect(Uri.parse('ws://$ip:7777'));
+    _channel = null;
+    scanEspAddress(7777).then((value) {
+      print("TESTE: " + value);
+      _channel = WebSocketChannel.connect(Uri.parse('ws://$value:7777'));
+    });
   }
 
   @override
@@ -53,8 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: JoystickWidget(
           callBack: ((foo) {
             print('${foo.x} ${foo.y}');
-
-            _channel.sink.add('${foo.x},${foo.y}');
+            _channel?.sink.add('${foo.x},${foo.y}');
           }),
           child: Column(
             children: [
@@ -66,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               StreamBuilder(
-                stream: _channel.stream,
+                stream: _channel?.stream,
                 builder: (context, snapshot) {
                   return Text(snapshot.hasData ? '${snapshot.data}' : '');
                 },
@@ -85,13 +87,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
-      _channel.sink.add(_controller.text);
+      _channel?.sink.add(_controller.text);
     }
   }
 
   @override
   void dispose() {
-    _channel.sink.close();
+    _channel?.sink.close();
     _controller.dispose();
     super.dispose();
   }
