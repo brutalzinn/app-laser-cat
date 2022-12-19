@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -11,20 +12,13 @@ Future<String?> scanEspAddress(int port) async {
       final String subnet = ip!.substring(0, ip.lastIndexOf('.'));
       for (var i = 0; i < 256; i++) {
         String ip = '$subnet.$i';
-
-        var socket = WebSocketChannel.connect(Uri.parse('ws://$ip:$port'));
-        socket.sink.add('hand');
-        socket.stream.listen(
-          (dynamic message) {
-            print('message $message');
-          },
-          onDone: () {
-            print('ws channel closed');
-          },
-          onError: (error) {
-            print('ws error $error');
-          },
-        );
+        try {
+          var socket = WebSocketChannel.connect(Uri.parse('ws://$ip:$port'));
+          socket.sink.add('hand');
+          await Future.delayed(Duration(milliseconds: 50));
+        } catch (ex) {
+          print("NOT FOUND IN $ip");
+        }
       }
     },
   );
