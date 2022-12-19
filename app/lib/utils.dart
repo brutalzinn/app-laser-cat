@@ -35,6 +35,7 @@ Future<void> scanEspAddress(int port, ScanDetails callBack) async {
               callBack(ip);
             }
           }
+          callBack(ip);
           print("encontrado ${ip}");
         },
             onDone: () => {

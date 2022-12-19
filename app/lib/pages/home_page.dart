@@ -17,16 +17,16 @@ class _HomePageState extends State<HomePage> {
   void connect() {
     print("try to find esp 8266");
     scanEspAddress(AppConfig.port, (value) {
+      print("VALOR RECEBIDO ${value}");
       if (value != null) {
         AppConfig.socketIp = value;
         Navigator.pushNamed(context, '/joystick');
       }
-      print("VALOR RECEBIDO ${value}");
     });
   }
 
   _HomePageState() {
-    // connect();
+    connect();
   }
   @override
   Widget build(BuildContext context) {

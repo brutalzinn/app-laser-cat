@@ -41,6 +41,8 @@ class _JoystickPageState extends State<JoystickPage> {
           }),
           child: Column(
             children: [
+              TextButton(
+                  onPressed: _toggleLaser, child: const Text("LASER ON")),
               Form(
                 child: TextFormField(
                   controller: _controller,
@@ -64,6 +66,10 @@ class _JoystickPageState extends State<JoystickPage> {
         child: const Icon(Icons.send),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void _toggleLaser() {
+    _channel?.sink.add(_controller.text);
   }
 
   void _sendMessage() {
