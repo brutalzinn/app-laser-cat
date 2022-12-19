@@ -17,7 +17,6 @@ class _HomePageState extends State<HomePage> {
   void connect() {
     print("try to find esp 8266");
     scanEspAddress(AppConfig.port, (value) {
-      print("VALOR RECEBIDO ${value}");
       if (value != null) {
         AppConfig.socketIp = value;
         Navigator.pushNamed(context, '/joystick');
@@ -40,10 +39,10 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
               children: [
                 const Text(
-                  "Conectando...",
+                  "Connecting...",
                   style: TextStyle(fontSize: 25),
                 ),
-                TextButton(onPressed: connect, child: Text('Conectar'))
+                TextButton(onPressed: connect, child: Text('Connect'))
               ],
             ))));
   }

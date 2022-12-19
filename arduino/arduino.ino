@@ -14,9 +14,9 @@
 Servo BASE_SERVO;
 Servo VERTICAL_SERVO;
 
-int BASE_SERVO_PIN = 3;
+int BASE_SERVO_PIN = 5;
 int VERTICAL_SERVO_PIN = 4;
-int LASER_PIN = 2;
+int LASER_PIN = 16;
 
 WebSocketsServer webSocket = WebSocketsServer(SOCK_PORT); // Recebe dados do cliente
 
@@ -34,8 +34,8 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
 
     case WStype_TEXT:
       { String text = String((char *) &payload[0]);
-        Serial.println(text);
-        Serial.println(num);
+        Serial.print(text);
+        Serial.print(num);
         Serial.println(type);
 
         if (text == "LASER_ON") {
@@ -55,16 +55,19 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
           int index = text.indexOf(',');
           String val_x = text.substring(0, index);
           String val_y = text.substring(text.lastIndexOf(','),text.length());
-          int val_base = map(val_x.toInt(), 0, 1023, 0, 180);
-          int val_vertical = map(val_y.toInt(), 0, 1023, 0, 180);     // scale it to use it with the servo (value between 0 and 180)
 
-          BASE_SERVO.write(val_base);
-          VERTICAL_SERVO.write(val_vertical);   
+          Serial.print("RECEBIDO:");
+          Serial.print(val_x);
+          Serial.print(val_y);
+
+       
+          BASE_SERVO.write(val_x.toInt());
+          delay(15);
+          VERTICAL_SERVO.write(val_y.toInt());   
+          delay(15);
+
           webSocket.sendTXT(0, "MOVING_SERVO");
-    
-     
-          Serial.print(val_base);
-          Serial.println(val_vertical);
+
         }
 
       }
@@ -81,14 +84,24 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   BASE_SERVO.attach(BASE_SERVO_PIN);
   VERTICAL_SERVO.attach(VERTICAL_SERVO_PIN);
-
   digitalWrite(LED_BUILTIN, OFF);
+
   WiFi.begin(SSID, PASSWD);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(". ");
     delay(100);
   }
   Serial.println(WiFi.localIP());
+  digitalWrite(LED_BUILTIN, ON);
+
+  for(int i= 0;i < 180; i++){
+
+     BASE_SERVO.write(i);
+     delay(15);
+     VERTICAL_SERVO.write(i);   
+  }
+
+
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
 

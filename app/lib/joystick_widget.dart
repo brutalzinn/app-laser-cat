@@ -19,6 +19,7 @@ class JoystickWidget extends StatelessWidget {
         listener: (details) {
           callBack(details);
         },
+        mode: JoystickMode.horizontalAndVertical,
         initialJoystickAlignment: Alignment.bottomCenter,
         child: child);
   }
