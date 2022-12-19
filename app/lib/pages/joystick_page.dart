@@ -19,6 +19,7 @@ class JoystickPage extends StatefulWidget {
 class _JoystickPageState extends State<JoystickPage> {
   final TextEditingController _controller = TextEditingController();
   WebSocketChannel? _channel;
+  bool toggleLaser = false;
 
   _JoystickPageState() {
     _channel = WebSocketChannel.connect(
@@ -69,7 +70,8 @@ class _JoystickPageState extends State<JoystickPage> {
   }
 
   void _toggleLaser() {
-    _channel?.sink.add(_controller.text);
+    _channel?.sink.add(toggleLaser ? "LASER_ON" : "LASER_OFF");
+    toggleLaser = !toggleLaser;
   }
 
   void _sendMessage() {
