@@ -1,5 +1,5 @@
 /***
-Exemplo de https://josecintra.com/blog/comunicacao-websockets-nodemcu-esp8266/
+  Exemplo de https://josecintra.com/blog/comunicacao-websockets-nodemcu-esp8266/
 ***/
 
 #include <ESP8266WiFi.h>
@@ -11,12 +11,12 @@ Exemplo de https://josecintra.com/blog/comunicacao-websockets-nodemcu-esp8266/
 #define ON LOW
 #define OFF HIGH
 
+Servo BASE_SERVO;
+Servo VERTICAL_SERVO;
 
- Servo baseServo;
- Servo verticalServo;  
-
-int baseServo_PIN = 3; //Pino ligado ao X do joystick
-int verticalServo_PIN = 4; //Pino ligado ao Y do joystick
+int BASE_SERVO_PIN = 3;
+int VERTICAL_SERVO_PIN = 4;
+int LASER_PIN = 2;
 
 WebSocketsServer webSocket = WebSocketsServer(SOCK_PORT); // Recebe dados do cliente
 
@@ -39,29 +39,34 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
         Serial.println(type);
 
         if (text == "LASER_ON") {
-          digitalWrite(LED_BUILTIN, ON);
+          digitalWrite(LASER_PIN, ON);
           webSocket.sendTXT(0, "LASER_ON");
         }
-        if (text == "LASER_OFF")  {
-          digitalWrite(LED_BUILTIN, OFF);
+        else if (text == "LASER_OFF")  {
+          digitalWrite(LASER_PIN, OFF);
           webSocket.sendTXT(0, "LASER_OFF");
         }
-
-        if(text == "HAND"){
+        else if (text == "HAND") {
           Serial.println("SENDING SHAKE TO DEVICE");
           webSocket.sendTXT(0, "shake");
+          return;
         }
+        else {
           int index = text.indexOf(',');
-          String val_x = text.substring(0,index);
-          String val_y = text.substring(1,index);
+          String val_x = text.substring(0, index);
+          String val_y = text.substring(text.lastIndexOf(','),text.length());
+          int val_base = map(val_x.toInt(), 0, 1023, 0, 180);
+          int val_vertical = map(val_y.toInt(), 0, 1023, 0, 180);     // scale it to use it with the servo (value between 0 and 180)
 
-           
-            Serial.println("Pos");
-            Serial.println(val_x);
-                    Serial.println(val_y);
+          BASE_SERVO.write(val_base);
+          VERTICAL_SERVO.write(val_vertical);   
+          webSocket.sendTXT(0, "MOVING_SERVO");
+    
+     
+          Serial.print(val_base);
+          Serial.println(val_vertical);
+        }
 
-      }
-        
       }
       break;
 
@@ -70,15 +75,14 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
 }
 
 void setup() {
-  
+
   // Inicialização do LED
   Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
-  baseServo.attach(baseServo_PIN);
-  verticalServo.attach(verticalServo_PIN);
-  
+  BASE_SERVO.attach(BASE_SERVO_PIN);
+  VERTICAL_SERVO.attach(VERTICAL_SERVO_PIN);
+
   digitalWrite(LED_BUILTIN, OFF);
-  // Conexões wi-fi e websocket
   WiFi.begin(SSID, PASSWD);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(". ");
