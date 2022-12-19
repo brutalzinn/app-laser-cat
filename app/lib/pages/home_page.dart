@@ -16,19 +16,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   void connect() {
     print("try to find esp 8266");
-    scanEspAddress(AppConfig.port).then((value) {
-      print(value);
+    scanEspAddress(AppConfig.port, (value) {
       if (value != null) {
         AppConfig.socketIp = value;
         Navigator.pushNamed(context, '/joystick');
-      } else {
-        print("esp 8266 not found on this network");
       }
+      print("VALOR RECEBIDO ${value}");
     });
   }
 
   _HomePageState() {
-    connect();
+    // connect();
   }
   @override
   Widget build(BuildContext context) {
