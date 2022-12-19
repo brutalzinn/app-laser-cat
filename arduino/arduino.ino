@@ -35,6 +35,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
         } else {
           digitalWrite(LED_BUILTIN, OFF);
         }
+
+        if(text == "hand"){
+          webSocket.sendTXT(0, "shake");
+        }
       }
       break;
 
