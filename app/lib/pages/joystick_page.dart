@@ -22,6 +22,7 @@ class _JoystickPageState extends State<JoystickPage> {
   final TextEditingController _controller = TextEditingController();
   WebSocketChannel? _channel;
   bool toggleLaser = false;
+  bool isReconnect = false;
   int xCoords = 0;
   int yCoords = 0;
   StreamController<String> streamController =
@@ -31,29 +32,37 @@ class _JoystickPageState extends State<JoystickPage> {
     _channel = WebSocketChannel.connect(
         Uri.parse('ws://${AppConfig.socketIp}:${AppConfig.port}'));
     _channel!.stream.listen((streamData) {
+      isReconnect = false;
       streamController.add(streamData);
     }, onDone: () {
-      Future.delayed(const Duration(seconds: 1)).then((_) {
-        print("trying to connect again...");
-        connectESP();
-      });
+      isReconnect = true;
+      reconnect();
     }, onError: (e) {
-      Future.delayed(const Duration(seconds: 1)).then((_) {
-        print("trying to connect again...");
-        connectESP();
-      });
-    });
+      isReconnect = true;
+      reconnect();
+    }, cancelOnError: true);
 
     print("connected.");
+  }
+
+  void reconnect() {
+    if (isReconnect == false) {
+      return;
+    }
+    Future.delayed(const Duration(seconds: 1)).then((_) {
+      print("trying to connect again... ");
+      connectESP();
+    });
   }
 
   void initConnection() async {
     print("trying to connect...");
     print('URL: ws://${AppConfig.socketIp}:${AppConfig.port}');
+    connectESP();
   }
 
   _JoystickPageState() {
-    connectESP();
+    initConnection();
     xCoords = 0;
     yCoords = 0;
   }
@@ -73,8 +82,8 @@ class _JoystickPageState extends State<JoystickPage> {
         padding: const EdgeInsets.all(20.0),
         child: JoystickWidget(
           callBack: ((foo) {
-            int x = map(foo.x, 0, 1.0, 0, 5);
-            int y = map(foo.y, 0, 1.0, 0, 5);
+            int x = map(-foo.x, 0, 1.0, 0, 25);
+            int y = map(-foo.y, 0, 1.0, 0, 25);
             xCoords += x;
             yCoords -= y;
 
@@ -92,10 +101,16 @@ class _JoystickPageState extends State<JoystickPage> {
             if (xCoords <= 0) {
               xCoords = 0;
             }
-            print('EVENT: $xCoords,$yCoords');
+            print('SEND: $xCoords,$yCoords');
             _channel?.sink.add('$xCoords,$yCoords');
+
             print('ok');
           }),
+          onDragEnd: () {
+            // print('SEND: $xCoords,$yCoords');
+            // _channel!.sink.add('$xCoords,$yCoords');
+            // print('ok');
+          },
           child: Column(
             children: [
               TextButton(

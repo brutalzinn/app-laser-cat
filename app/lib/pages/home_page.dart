@@ -17,10 +17,8 @@ class _HomePageState extends State<HomePage> {
   void connect() {
     print("try to find esp 8266");
     scanEspAddress(AppConfig.port, (value) {
-      if (value != null) {
-        AppConfig.socketIp = value;
-        Navigator.pushNamed(context, '/joystick');
-      }
+      AppConfig.socketIp = value!;
+      Navigator.pushNamed(context, '/joystick');
     });
   }
 
@@ -34,7 +32,7 @@ class _HomePageState extends State<HomePage> {
           title: Text(widget.title),
         ),
         body: Padding(
-            padding: EdgeInsets.all(20.0),
+            padding: EdgeInsets.all(12.0),
             child: Center(
                 child: Column(
               children: [

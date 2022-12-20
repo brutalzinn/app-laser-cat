@@ -6,12 +6,14 @@ typedef JoystickDragDetails = void Function(StickDragDetails foo);
 
 class JoystickWidget extends StatelessWidget {
   final JoystickDragDetails callBack;
+  final Function onDragEnd;
   final Widget child;
 
   const JoystickWidget({
     Key? key,
     required this.callBack,
     required this.child,
+    required this.onDragEnd,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -19,6 +21,7 @@ class JoystickWidget extends StatelessWidget {
         listener: (details) {
           callBack(details);
         },
+        onStickDragEnd: onDragEnd,
         mode: JoystickMode.horizontalAndVertical,
         initialJoystickAlignment: Alignment.bottomCenter,
         child: child);

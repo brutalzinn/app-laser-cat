@@ -37,7 +37,9 @@ Future<void> scanEspAddress(int port, ScanDetails callBack) async {
           }
           callBack(ip);
           print("encontrado ${ip}");
+          webSocketChannel.sink.close();
         },
+            cancelOnError: true,
             onDone: () => {
                   webSocketChannel.sink.close(),
                   connectedToWebSocketServer = false,

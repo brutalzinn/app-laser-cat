@@ -28,6 +28,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
 
     case WStype_CONNECTED:
       { IPAddress ip = webSocket.remoteIP(num);
+      Serial.print("Connected:");
         Serial.println(ip);
       }
       break;
@@ -54,20 +55,22 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
         else {
           int index = text.indexOf(',');
           String val_x = text.substring(0, index);
-          String val_y = text.substring(text.lastIndexOf(','),text.length());
+          String val_y = text.substring(index + 1,text.length());
 
-          Serial.print("RECEBIDO:");
-          Serial.print(val_x);
-          Serial.print(val_y);
+          Serial.print("MOVING_SERVO:");
+          Serial.println(val_x);
+          Serial.println(val_y);
 
+       int pos1 = val_x.toInt();     
+        int pos2 = val_y.toInt();
+//          BASE_SERVO.write(pos1);
+//          VERTICAL_SERVO.write(pos2); 
        
-          BASE_SERVO.write(val_x.toInt());
-          delay(15);
-          VERTICAL_SERVO.write(val_y.toInt());   
-          delay(15);
-
-          webSocket.sendTXT(0, "MOVING_SERVO");
-
+          BASE_SERVO.write(pos1);
+       
+          VERTICAL_SERVO.write(pos2); 
+       
+        webSocket.sendTXT(0, "MOVING_SERVO");
         }
 
       }
@@ -93,17 +96,10 @@ void setup() {
   }
   Serial.println(WiFi.localIP());
   digitalWrite(LED_BUILTIN, ON);
-
-  for(int i= 0;i < 180; i++){
-
-     BASE_SERVO.write(i);
-     delay(15);
-     VERTICAL_SERVO.write(i);   
-  }
-
-
+ 
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
+  
 
 }
 
