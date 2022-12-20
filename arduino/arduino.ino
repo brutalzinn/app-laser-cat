@@ -16,7 +16,7 @@ Servo VERTICAL_SERVO;
 
 int BASE_SERVO_PIN = 5;
 int VERTICAL_SERVO_PIN = 4;
-int LASER_PIN = 16;
+int LASER_PIN = 0;
 
 WebSocketsServer webSocket = WebSocketsServer(SOCK_PORT); // Recebe dados do cliente
 
@@ -29,7 +29,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
     case WStype_CONNECTED:
       { IPAddress ip = webSocket.remoteIP(num);
       Serial.print("Connected:");
-        Serial.println(ip);
+      Serial.println(ip);
+      digitalWrite(LASER_PIN, LOW);
+      webSocket.sendTXT(0, "LASER_OFF");
       }
       break;
 
@@ -40,11 +42,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
         Serial.println(type);
 
         if (text == "LASER_ON") {
-          digitalWrite(LASER_PIN, ON);
+          digitalWrite(LASER_PIN, HIGH);
           webSocket.sendTXT(0, "LASER_ON");
         }
         else if (text == "LASER_OFF")  {
-          digitalWrite(LASER_PIN, OFF);
+          digitalWrite(LASER_PIN, LOW);
           webSocket.sendTXT(0, "LASER_OFF");
         }
         else if (text == "HAND") {
@@ -61,8 +63,8 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
           Serial.println(val_x);
           Serial.println(val_y);
 
-       int pos1 = val_x.toInt();     
-        int pos2 = val_y.toInt();
+          int pos1 = val_x.toInt();     
+          int pos2 = val_y.toInt();
 //          BASE_SERVO.write(pos1);
 //          VERTICAL_SERVO.write(pos2); 
        
@@ -70,7 +72,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
        
           VERTICAL_SERVO.write(pos2); 
        
-        webSocket.sendTXT(0, "MOVING_SERVO");
+          webSocket.sendTXT(0, "MOVING_SERVO");
         }
 
       }
@@ -85,6 +87,8 @@ void setup() {
   // Inicialização do LED
   Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LASER_PIN, OUTPUT);
+
   BASE_SERVO.attach(BASE_SERVO_PIN);
   VERTICAL_SERVO.attach(VERTICAL_SERVO_PIN);
   digitalWrite(LED_BUILTIN, OFF);

@@ -1,21 +1,18 @@
-import 'package:app_laser_cat/pages/joystick_page.dart';
+import 'package:app_laser_cat/modules/home/ui/views/home_view.dart';
+import 'package:app_laser_cat/modules/joystick/ui/views/joystick_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import 'pages/home_page.dart';
+import 'shared/infra/global_binding.dart';
 
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/',
-      routes: {
-        '/': (context) => HomePage(title: 'Web Socket connector'),
-        '/joystick': (context) => JoystickPage(title: 'Laser Controller'),
-      },
-    );
-  }
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  GlobalBinding().dependencies();
+  runApp(GetMaterialApp(
+    initialRoute: '/',
+    getPages: [
+      GetPage(name: '/', page: () => HomeView()),
+      GetPage(name: '/joystick', page: () => JoystickView()),
+    ],
+  ));
 }

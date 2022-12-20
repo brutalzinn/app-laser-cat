@@ -40,6 +40,8 @@ dependencies:
   web_socket_channel: ^2.2.0
   network_info_plus: ^3.0.1
   permission_handler: ^10.2.0
+  get: ^4.6.5
+  get_storage: ^2.0.3
 
 dev_dependencies:
   flutter_test:
