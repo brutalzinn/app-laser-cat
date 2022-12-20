@@ -1,4 +1,0 @@
-#Tue Dec 20 14:18:42 BRT 2022
-base.0=C\:\\Users\\rober\\OneDrive\\Documentos\\app-laser-cat\\app\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-renamed.0=classes.dex
-path.0=classes.dex

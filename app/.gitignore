@@ -134,6 +134,7 @@ VSCode provides this and is equally good as the android studio version
 .pub-cache/
 .pub/
 **/build/
+**.vscode
 
 # Web related
 lib/generated_plugin_registrant.dart
