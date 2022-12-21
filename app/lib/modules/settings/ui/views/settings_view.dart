@@ -22,28 +22,18 @@ class SettingsView extends StatelessWidget {
             child: Center(
                 child: Column(
               children: [
-                const Text(
-                  "Connecting...",
-                  style: TextStyle(fontSize: 25),
-                ),
-                Row(
-                  children: [
-                    SettingsText(
-                        label: "IP:", controller: settingsController.socketIp),
-                    SettingsText(
-                        label: "PORT:",
-                        controller: settingsController.socketPort),
-                    SettingsText(
-                        label: "Velocity:",
-                        controller: settingsController.velocity),
-                    SettingsText(
-                        label: "Delivery delay:",
-                        controller: settingsController.deliveryDelay),
-                    SettingsText(
-                        label: "Timeout:",
-                        controller: settingsController.timeout),
-                  ],
-                ),
+                SettingsText(
+                    label: "IP:", controller: settingsController.socketIp),
+                SettingsText(
+                    label: "PORT:", controller: settingsController.socketPort),
+                SettingsText(
+                    label: "Velocity:",
+                    controller: settingsController.velocity),
+                SettingsText(
+                    label: "Delivery delay:",
+                    controller: settingsController.deliveryDelay),
+                SettingsText(
+                    label: "Timeout:", controller: settingsController.timeout),
                 TextButton(
                     onPressed: settingsController.saveSettings,
                     child: const Text('Salvar'))
