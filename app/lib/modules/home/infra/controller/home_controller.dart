@@ -1,4 +1,5 @@
 import 'package:app_laser_cat/app_config.dart';
+import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/utils.dart';
 import 'package:get/get.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -9,11 +10,16 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 typedef ScanDetails = void Function(String? value);
 
 class HomeController extends GetxController {
+  @override
+  void onInit() {
+    connect();
+  }
+
   void connect() {
     print("try to find esp 8266");
     scanEspAddress(AppConfig.port, (value) {
       AppConfig.socketIp = value!;
-      // Navigator.pushNamed(context, '/joystick');
+      Get.toNamed(SharedRoutes.JoystickHomeRoute);
     });
   }
 

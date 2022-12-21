@@ -4,5 +4,5 @@ class AppConfig {
   static String appVersion = "1.0.0";
   static String appName = "Laser Cat";
 
-  static String appTitle = "${appName}-${appVersion}";
+  static String appTitle = "${appName} ${appVersion}";
 }

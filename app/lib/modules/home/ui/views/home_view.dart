@@ -1,11 +1,8 @@
 import 'package:app_laser_cat/modules/home/infra/controller/home_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 
 import '../../../../app_config.dart';
-import '../../../../utils.dart';
 
 class HomeView extends StatelessWidget {
   final homeController = Get.find<HomeController>();
