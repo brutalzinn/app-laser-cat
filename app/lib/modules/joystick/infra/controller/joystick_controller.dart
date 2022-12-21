@@ -61,7 +61,7 @@ class JoystickController extends GetxController {
   }
 
   /// map cartesian plan xCoords and yCoords to servo range.
-  void _mapToServoRange(double dx, double dy, [double steps = 20]) {
+  void _mapToServoRange(double dx, double dy, [double steps = 10]) {
     int x = Utils.remapper(-dx, 0, 1.0, 0, steps);
     int y = Utils.remapper(-dy, 0, 1.0, 0, steps);
     _xCoords += x;
@@ -130,11 +130,10 @@ class JoystickController extends GetxController {
   }
 
   //play recording
-  void playRecording() {
+  Future<void> playRecording() async {
     for (var coords in packages.value) {
-      Future.delayed(const Duration(milliseconds: 15)).then((_) {
-        _sendPackage(coords.x, coords.y);
-      });
+      _sendPackage(coords.x, coords.y);
+      await Future.delayed(const Duration(seconds: 1));
     }
   }
 }
