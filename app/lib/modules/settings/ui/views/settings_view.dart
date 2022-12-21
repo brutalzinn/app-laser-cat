@@ -17,27 +17,22 @@ class SettingsView extends StatelessWidget {
         appBar: AppBar(
           title: Text(AppConfig.appTitle),
         ),
-        body: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Center(
-                child: Column(
-              children: [
-                SettingsText(
-                    label: "IP:", controller: settingsController.socketIp),
-                SettingsText(
-                    label: "PORT:", controller: settingsController.socketPort),
-                SettingsText(
-                    label: "Velocity:",
-                    controller: settingsController.velocity),
-                SettingsText(
-                    label: "Delivery delay:",
-                    controller: settingsController.deliveryDelay),
-                SettingsText(
-                    label: "Timeout:", controller: settingsController.timeout),
-                TextButton(
-                    onPressed: settingsController.saveSettings,
-                    child: const Text('Salvar'))
-              ],
-            ))));
+        body: Column(
+          children: [
+            SettingsText(label: "IP:", controller: settingsController.socketIp),
+            SettingsText(
+                label: "Port:", controller: settingsController.socketPort),
+            SettingsText(
+                label: "Velocity:", controller: settingsController.velocity),
+            SettingsText(
+                label: "Delivery delay:",
+                controller: settingsController.deliveryDelay),
+            SettingsText(
+                label: "Timeout:", controller: settingsController.timeout),
+            TextButton(
+                onPressed: settingsController.saveSettings,
+                child: const Text('Salvar'))
+          ],
+        ));
   }
 }

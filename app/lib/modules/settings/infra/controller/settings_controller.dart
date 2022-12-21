@@ -22,9 +22,9 @@ class SettingsController extends GetxController {
   void saveSettings() {
     final settings = Get.find<SettingsPref>();
     settings.socketIp = socketIp.text;
-    settings.deliveryDelay = deliveryDelay.text as int;
-    settings.socketPort = socketPort.text as int;
-    settings.velocity = velocity.text as int;
-    settings.timeout = timeout.text as int;
+    settings.deliveryDelay = int.parse(deliveryDelay.text);
+    settings.socketPort = int.parse(socketPort.text);
+    settings.velocity = int.parse(velocity.text);
+    settings.timeout = int.parse(timeout.text);
   }
 }

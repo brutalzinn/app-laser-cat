@@ -2,23 +2,22 @@
 import 'package:flutter/material.dart';
 
 class SettingsText extends StatelessWidget {
+  final String label;
+  final TextEditingController controller;
+
   const SettingsText({
     Key? key,
     required this.label,
     required this.controller,
   }) : super(key: key);
-  final String label;
-  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(label),
-        TextField(
-          controller: controller,
-        ),
-      ],
-    );
+    return TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          border: const UnderlineInputBorder(),
+          labelText: label,
+        ));
   }
 }
