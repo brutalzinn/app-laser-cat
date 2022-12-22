@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'shared/infra/bindings/global_binding.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GlobalBinding().dependencies();
   runApp(GetMaterialApp(
     initialRoute: SharedRoutes.HomeRoute,
-    // initialBinding: GlobalBinding(),
     getPages: [
       GetPage(
           name: SharedRoutes.HomeRoute,
