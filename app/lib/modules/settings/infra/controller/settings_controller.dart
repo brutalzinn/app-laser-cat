@@ -8,23 +8,25 @@ class SettingsController extends GetxController {
   TextEditingController velocity = TextEditingController();
   TextEditingController timeout = TextEditingController();
   TextEditingController deliveryDelay = TextEditingController();
+  SettingsPref? settings;
 
   @override
-  onInit() {
-    final settings = Get.find<SettingsPref>();
-    socketIp.text = settings.socketIp;
-    socketPort.text = settings.socketPort.toString();
-    velocity.text = settings.velocity.toString();
-    timeout.text = settings.timeout.toString();
-    deliveryDelay.text = settings.deliveryDelay.toString();
+  void onInit() {
+    super.onInit();
+    settings = Get.find<SettingsPref>();
+    socketIp.text = settings!.socketIp.val;
+    socketPort.text = settings!.socketPort.val.toString();
+    velocity.text = settings!.velocity.val.toString();
+    timeout.text = settings!.timeout.val.toString();
+    deliveryDelay.text = settings!.deliveryDelay.val.toString();
   }
 
   void saveSettings() {
-    final settings = Get.find<SettingsPref>();
-    settings.socketIp = socketIp.text;
-    settings.deliveryDelay = int.parse(deliveryDelay.text);
-    settings.socketPort = int.parse(socketPort.text);
-    settings.velocity = int.parse(velocity.text);
-    settings.timeout = int.parse(timeout.text);
+    settings!.socketIp.val = socketIp.text;
+    settings!.deliveryDelay.val = int.parse(deliveryDelay.text);
+    settings!.socketPort.val = int.parse(socketPort.text);
+    settings!.velocity.val = int.parse(velocity.text);
+    settings!.timeout.val = int.parse(timeout.text);
+    Get.back();
   }
 }
