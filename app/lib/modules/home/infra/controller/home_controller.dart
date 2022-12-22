@@ -1,5 +1,5 @@
 import 'package:app_laser_cat/app_config.dart';
-import 'package:app_laser_cat/modules/settings/infra/provider/settings_provider.dart';
+import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/utils.dart';
 import 'package:get/get.dart';

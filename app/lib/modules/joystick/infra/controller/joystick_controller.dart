@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/joystick/infra/models/coord_package.dart';
-import 'package:app_laser_cat/modules/settings/infra/provider/settings_provider.dart';
+import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
+import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
+import 'package:app_laser_cat/shared/ui/dialogs/textfield_dialog.dart';
 import 'package:app_laser_cat/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -16,6 +21,7 @@ class JoystickController extends GetxController {
   final Rx<String> lastResponse = Rx<String>("");
   Rx<bool> isRecording = Rx<bool>(false);
   SettingsPref settings = Get.find<SettingsPref>();
+  TextEditingController recordName = TextEditingController();
 
   ///init this instance
   @override
@@ -113,6 +119,18 @@ class JoystickController extends GetxController {
 
   //future methods to record and playback laser moviments
   void _stopRecording() {
+    TextFieldDialog(
+            title: "Save as",
+            onSave: () {
+              final fileProvider = FileProvider();
+              final mapper = packages.value;
+              fileProvider.write("records/${recordName.text}.json", mapper);
+              print("saving as ${recordName.text}.json");
+            },
+            onCancel: () => Get.back(),
+            label: "File name",
+            controller: recordName)
+        .showDialog();
     isRecording.value = false;
   }
 

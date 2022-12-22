@@ -1,5 +1,5 @@
 import 'package:app_laser_cat/modules/home/ui/views/home_view.dart';
-import 'package:app_laser_cat/modules/settings/infra/provider/settings_provider.dart';
+import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';

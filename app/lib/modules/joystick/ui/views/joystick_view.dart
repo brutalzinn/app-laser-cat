@@ -46,16 +46,16 @@ class JoystickView extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          FloatingActionButton(
-              onPressed: () => Get.toNamed(SharedRoutes.SettingsRoute),
-              // heroTag: 'settings',
-              tooltip: 'Settings',
-              child: const Icon(Icons.settings)),
           // FloatingActionButton(
-          //     heroTag: 'play_record',
-          //     onPressed: joystickController.playRecording,
-          //     tooltip: 'Play record',
-          //     child: const Icon(Icons.play_arrow)),
+          //     onPressed: () => Get.toNamed(SharedRoutes.SettingsRoute),
+          //     // heroTag: 'settings',
+          //     tooltip: 'Settings',
+          //     child: const Icon(Icons.settings)),
+          FloatingActionButton(
+              heroTag: 'play_record',
+              onPressed: joystickController.playRecording,
+              tooltip: 'Play record',
+              child: const Icon(Icons.play_arrow)),
         ]),
       ),
     );
