@@ -1,4 +1,5 @@
 import 'package:app_laser_cat/app_config.dart';
+import 'package:app_laser_cat/modules/settings/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/utils.dart';
 import 'package:get/get.dart';
@@ -10,17 +11,30 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 typedef ScanDetails = void Function(String? value);
 
 class HomeController extends GetxController {
+  SettingsPref settings = Get.find<SettingsPref>();
+
   @override
   void onInit() {
-    connect();
+    //connect();
   }
 
   void connect() {
+    if (settings.autoReconnect.val == false) {
+      print(
+          "trying to connect with ${settings.socketIp.val}:${settings.socketPort.val}");
+      return;
+    }
     print("try to find esp 8266");
-    scanEspAddress(AppConfig.port, (value) {
-      AppConfig.socketIp = value!;
+    scanEspAddress(settings.socketPort.val, (value) {
+      settings.socketIp.val = value!;
       Get.toNamed(SharedRoutes.JoystickHomeRoute);
     });
+  }
+
+  String getAutoConnectStatus() {
+    return settings.autoReconnect.val
+        ? "Connecting..."
+        : "Auto connection is off";
   }
 
   Future<void> scanEspAddress(int port, ScanDetails callBack) async {

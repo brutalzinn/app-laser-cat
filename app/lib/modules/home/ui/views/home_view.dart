@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:app_laser_cat/modules/home/infra/controller/home_controller.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,9 @@ import '../../../../app_config.dart';
 
 class HomeView extends StatelessWidget {
   final homeController = Get.find<HomeController>();
-  HomeView({super.key});
+  HomeView({super.key}) {
+    Future.delayed(Duration.zero, () => homeController.connect());
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +23,9 @@ class HomeView extends StatelessWidget {
           child: Center(
               child: Column(
             children: [
-              const Text(
-                "Connecting...",
-                style: TextStyle(fontSize: 25),
+              Text(
+                homeController.getAutoConnectStatus(),
+                style: const TextStyle(fontSize: 25),
               ),
               TextButton(
                   onPressed: homeController.connect,

@@ -20,6 +20,8 @@ class SettingsView extends StatelessWidget {
         body: Column(
           children: [
             SettingsText(label: "IP:", controller: settingsController.socketIp),
+            const Text(
+                "Auto reconnect will change this ip VALUE. Be sure your esp 8266 is connect same network this device."),
             SettingsText(
                 label: "Port:", controller: settingsController.socketPort),
             SettingsText(
@@ -29,9 +31,28 @@ class SettingsView extends StatelessWidget {
                 controller: settingsController.deliveryDelay),
             SettingsText(
                 label: "Timeout:", controller: settingsController.timeout),
-            TextButton(
-                onPressed: settingsController.saveSettings,
-                child: const Text('Salvar'))
+            Obx(
+              () => Row(
+                children: [
+                  const Text("Auto reconnect:"),
+                  Checkbox(
+                      value: settingsController.isAutoReconnect.value,
+                      onChanged: (bool? value) =>
+                          settingsController.onChangeAutoReconnect(value!)),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                    onPressed: settingsController.saveSettings,
+                    child: const Text('Save')),
+                TextButton(
+                    onPressed: settingsController.cancelSettings,
+                    child: const Text('Cancel'))
+              ],
+            )
           ],
         ));
   }

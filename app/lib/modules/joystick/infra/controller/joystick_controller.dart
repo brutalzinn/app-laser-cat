@@ -1,5 +1,6 @@
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/joystick/infra/models/coord_package.dart';
+import 'package:app_laser_cat/modules/settings/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/utils.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -14,6 +15,7 @@ class JoystickController extends GetxController {
   final Rx<List<CoordPackage>> packages = Rx<List<CoordPackage>>([]);
   final Rx<String> lastResponse = Rx<String>("");
   Rx<bool> isRecording = Rx<bool>(false);
+  SettingsPref settings = Get.find<SettingsPref>();
 
   ///init this instance
   @override
@@ -25,7 +27,7 @@ class JoystickController extends GetxController {
   void connectESP() {
     _lastResponse("Connecting..");
     _channel = WebSocketChannel.connect(
-        Uri.parse('ws://${AppConfig.socketIp}:${AppConfig.port}'));
+        Uri.parse('ws://${settings.socketIp.val}:${settings.socketPort.val}'));
     _channel!.stream.listen((streamData) {
       lastResponse.value = streamData;
       isReconnect = false;
@@ -47,7 +49,7 @@ class JoystickController extends GetxController {
     if (isReconnect == false) {
       return;
     }
-    Future.delayed(const Duration(seconds: 3)).then((_) {
+    Future.delayed(Duration(seconds: settings.timeout.val)).then((_) {
       _lastResponse("trying to connect again... ");
       connectESP();
     });
@@ -56,12 +58,12 @@ class JoystickController extends GetxController {
   ///init connection with esp8266
   void initConnection() async {
     _lastResponse("trying to connect...");
-    print('URL: ws://${AppConfig.socketIp}:${AppConfig.port}');
     connectESP();
   }
 
   /// map cartesian plan xCoords and yCoords to servo range.
-  void _mapToServoRange(double dx, double dy, [double steps = 10]) {
+  void _mapToServoRange(double dx, double dy) {
+    double steps = settings.velocity.val;
     int x = Utils.remapper(-dx, 0, 1.0, 0, steps);
     int y = Utils.remapper(-dy, 0, 1.0, 0, steps);
     _xCoords += x;
@@ -133,7 +135,7 @@ class JoystickController extends GetxController {
   Future<void> playRecording() async {
     for (var coords in packages.value) {
       _sendPackage(coords.x, coords.y);
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: settings.deliveryDelay.val));
     }
   }
 }

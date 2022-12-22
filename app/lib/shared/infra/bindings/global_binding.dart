@@ -4,6 +4,6 @@ import 'package:get/get.dart';
 class GlobalBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => SettingsPref(), fenix: true);
+    // Get.lazyPut(() => SettingsPref(), fenix: true);
   }
 }
