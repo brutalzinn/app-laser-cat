@@ -121,11 +121,13 @@ class JoystickController extends GetxController {
   void _stopRecording() {
     TextFieldDialog(
             title: "Save as",
-            onSave: () {
+            onSave: () async {
               final fileProvider = FileProvider();
               final mapper = packages.value;
-              fileProvider.write("records/${recordName.text}.json", mapper);
+              fileProvider.write(
+                  "records/${recordName.text}.json", json.encode(mapper));
               print("saving as ${recordName.text}.json");
+              Get.back();
             },
             onCancel: () => Get.back(),
             label: "File name",
