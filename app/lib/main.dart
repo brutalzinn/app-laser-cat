@@ -11,8 +11,9 @@ import 'shared/infra/bindings/global_binding.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  GlobalBinding().dependencies();
+  // GlobalBinding().dependencies();
   runApp(GetMaterialApp(
+    initialBinding: GlobalBinding(),
     initialRoute: SharedRoutes.HomeRoute,
     getPages: [
       GetPage(
