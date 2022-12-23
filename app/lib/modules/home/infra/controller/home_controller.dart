@@ -31,15 +31,14 @@ class HomeController extends GetxController {
     int maxAttemps = settings.autoReconnectAttempts.val;
     Timer.periodic(Duration(seconds: settings.autoReconnectInterval.val),
         (timer) {
-      print(
-          "try to find esp 8266, time of ${settings.autoReconnectInterval.val}");
+      print("try to find esp 8266, attemp of ${attemps}/${maxAttemps}");
       scanEspAddress(settings.socketPort.val, (value) {
         settings.socketIp.val = value!;
         timer.cancel();
         Get.toNamed(SharedRoutes.JoystickHomeRoute);
       });
       if (attemps >= maxAttemps) {
-        print("cancel timer because user goes to another page");
+        print("cancel timer because max attemps catch.");
         timer.cancel();
       }
       attemps++;
