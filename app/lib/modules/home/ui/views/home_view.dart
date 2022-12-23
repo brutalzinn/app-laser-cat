@@ -1,13 +1,11 @@
 import 'dart:core';
 
+import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/home/infra/controller/home_controller.dart';
-import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/shared/ui/menu/custom_scaffold.dart';
-import 'package:app_laser_cat/shared/ui/widgets/custom_floating_buttons.dart';
+import 'package:app_laser_cat/shared/ui/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../../app_config.dart';
 
 class HomeView extends StatelessWidget {
   final homeController = Get.find<HomeController>();
@@ -19,19 +17,14 @@ class HomeView extends StatelessWidget {
         child: Center(
             child: Column(
           children: [
-            Text(
-              homeController.getAutoConnectStatus(),
-              style: const TextStyle(fontSize: 25),
+            Obx(
+              () => Text(
+                homeController.notificationMessage.value,
+                style: const TextStyle(fontSize: 25),
+              ),
             ),
-            ElevatedButton(
-                onPressed: homeController.connect,
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        AppConfig.primaryColor)),
-                child: Text(
-                  'Connect',
-                  style: TextStyle(color: AppConfig.secondaryColor),
-                ))
+            CustomElevatedButton(
+                onPressed: homeController.connect, label: "Connect")
           ],
         )));
   }

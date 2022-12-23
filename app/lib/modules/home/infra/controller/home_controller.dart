@@ -14,41 +14,44 @@ typedef ScanDetails = void Function(String? value);
 
 class HomeController extends GetxController {
   SettingsPref settings = Get.find<SettingsPref>();
+  Rx<String> notificationMessage = Rx<String>("");
+
+  void setNotificationMessage(String message) {
+    notificationMessage.value = message;
+  }
 
   @override
   void onInit() {
-    //connect();
+    String initMessage = settings.autoReconnect.val
+        ? "Trying Connecting..."
+        : "Auto connection is off. \n Try manual connection.";
+    setNotificationMessage(initMessage);
   }
 
   void connect() {
-    print("try to find esp 8266");
     if (settings.autoReconnect.val == false) {
-      print(
-          "trying to connect with ${settings.socketIp.val}:${settings.socketPort.val}");
+      setNotificationMessage(
+          "Trying to connect with \n ${settings.socketIp.val}:${settings.socketPort.val}");
       return;
     }
-    int attemps = 0;
+    int attemps = 1;
     int maxAttemps = settings.autoReconnectAttempts.val;
     Timer.periodic(Duration(seconds: settings.autoReconnectInterval.val),
         (timer) {
-      //print("try to find esp 8266, attemp of ${attemps}/${maxAttemps}");
+      print("Try to connect. \n Attemp of ${attemps}/${maxAttemps}");
+      setNotificationMessage(
+          "Try to connect. \n Attemp of ${attemps}/${maxAttemps}");
       scanEspAddress(settings.socketPort.val, (value) {
         settings.socketIp.val = value!;
         timer.cancel();
         Get.toNamed(SharedRoutes.JoystickHomeRoute);
       });
       if (attemps >= maxAttemps) {
-        print("cancel timer because max attemps catch.");
+        setNotificationMessage("Cant connect. \n Try manual connection.");
         timer.cancel();
       }
       attemps++;
     });
-  }
-
-  String getAutoConnectStatus() {
-    return settings.autoReconnect.val
-        ? "Connecting..."
-        : "Auto connection is off";
   }
 
   Future<void> scanEspAddress(int port, ScanDetails callBack) async {

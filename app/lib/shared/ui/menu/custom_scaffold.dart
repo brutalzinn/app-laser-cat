@@ -55,6 +55,7 @@ class CustomScaffold extends StatelessWidget {
                     onPressed: () {
                       if (lastPage) {
                         Get.back();
+                        return;
                       }
                       controller.toggleExpanded();
                     },
