@@ -41,6 +41,8 @@ class JoystickView extends StatelessWidget {
           ),
         ),
       ),
+      //        floatingActionButton: const SettingsFloatingButton());
+
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Container(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),

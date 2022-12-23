@@ -2,6 +2,8 @@ import 'package:app_laser_cat/modules/home/infra/binding/home_binding.dart';
 import 'package:app_laser_cat/modules/home/ui/views/home_view.dart';
 import 'package:app_laser_cat/modules/joystick/infra/binding/joystick_binding.dart';
 import 'package:app_laser_cat/modules/joystick/ui/views/joystick_view.dart';
+import 'package:app_laser_cat/modules/records/infra/binding/record_binding.dart';
+import 'package:app_laser_cat/modules/records/ui/views/records_list_view.dart';
 import 'package:app_laser_cat/modules/settings/infra/binding/settings_binding.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/modules/settings/ui/views/settings_view.dart';
@@ -16,11 +18,10 @@ void main() async {
   }
 
   WidgetsFlutterBinding.ensureInitialized();
-  // GlobalBinding().dependencies();
   await initialConfig();
+  GlobalBinding().dependencies();
   runApp(GetMaterialApp(
-    initialBinding: GlobalBinding(),
-    initialRoute: SharedRoutes.JoystickHomeRoute,
+    initialRoute: SharedRoutes.HomeRoute,
     getPages: [
       GetPage(
           name: SharedRoutes.HomeRoute,
@@ -34,6 +35,10 @@ void main() async {
           name: SharedRoutes.SettingsRoute,
           page: () => SettingsView(),
           binding: SettingsBinding()),
+      GetPage(
+          name: SharedRoutes.RecordRoute,
+          page: () => RecordListView(),
+          binding: RecordBinding()),
     ],
   ));
 }
