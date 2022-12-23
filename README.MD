@@ -23,6 +23,12 @@ Inspired by https://create.arduino.cc/projecthub/Seafox_C/arduino-cat-laser-toy-
 
 ![settings screen](/docs/imgs/prints/print_settings.png "settings screen").
 
+## Esp8266 Hardware 
+
+![Esp8266](/docs/imgs/hardware_photo.jpg "Esp8266 hardware part").
+
+
+![Esp8266](/docs/imgs/hardware_photo_2.jpg "Esp8266 hardware part").
 
 # Why i need this?
 
