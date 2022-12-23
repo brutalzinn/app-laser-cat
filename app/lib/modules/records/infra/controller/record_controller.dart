@@ -9,13 +9,21 @@ class RecordController extends GetxController {
   Rx<List<RecordModel>> records = Rx<List<RecordModel>>([]);
 
   Future<void> getRecordList() async {
+    records.value.clear();
     print("record list");
     final fileStorage = FileProvider();
     final List<String> files =
         await fileStorage.listFilesByDir(AppConfig.recordsDir, true);
-    for (var e in files) {
-      var recordList = jsonDecode(await fileStorage.read(e));
-      records.value = recordList;
+    print("files found ${files}");
+    for (var filaName in files) {
+      final filePath = "${AppConfig.recordsDir}/${filaName}";
+      print("test file ${filePath}");
+      var recordJson = await fileStorage.read(filePath);
+      print(recordJson);
+      final record = RecordModel.fromJson(recordJson);
+      // var reco
+      print("file ${filePath} ${record}");
+      records.value.add(record);
     }
   }
 }

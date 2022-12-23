@@ -48,7 +48,7 @@ class JoystickController extends GetxController {
       reconnect();
     }, cancelOnError: true);
 
-    _lastResponse("connected.");
+    //  _lastResponse("connected.");
   }
 
   ///auto reconnect
@@ -126,7 +126,7 @@ class JoystickController extends GetxController {
               final fileProvider = FileProvider();
               String name = recordName.text.toLowerCase();
               final mapper = RecordModel(name: name, packages: packages.value);
-              fileProvider.write("records/${name}.json", json.encode(mapper));
+              fileProvider.write("records/${name}.json", mapper.toJson());
               print("saving as ${name}.json");
               Get.back();
             },

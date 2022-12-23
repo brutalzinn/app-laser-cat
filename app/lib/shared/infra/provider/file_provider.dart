@@ -34,15 +34,17 @@ class FileProvider {
     final path = await _localPath;
     final dirPath = Directory("$path/$directoryName");
     final dirExist = await dirPath.exists();
+    //print("dir exists ${dirExist}");
     if (dirExist == false) {
       return [];
     }
-    print(dirPath.path);
+    //  print("dir: ${dirPath.path}");
 
     await for (var entity
         in dirPath.list(recursive: true, followLinks: false)) {
       baseName ? files.add(basename(entity.path)) : files.add(entity.path);
     }
+    // print("result: ${files}");
     return files;
   }
 }

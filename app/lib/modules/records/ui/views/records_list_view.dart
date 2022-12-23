@@ -14,20 +14,21 @@ class RecordListView extends StatelessWidget {
         navigationMenu: true,
         lastPage: true,
         title: "Angule Records",
-        onWidgetBuild: () => print("start angular records searchs"),
-        child: Center(
-            child: ListView.builder(
-                itemCount: recordController.records.value.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final item = recordController.records.value[index];
-                  return ListTile(
-                      leading: const Icon(Icons.list),
-                      trailing: Text(
-                        item.name,
-                        style: TextStyle(
-                            color: AppConfig.secondaryColor, fontSize: 15),
-                      ),
-                      title: Text(item.name));
-                })));
+        onWidgetBuild: () => recordController.getRecordList(),
+        child: Obx(
+          () => ListView.builder(
+              itemCount: recordController.records.value.length,
+              itemBuilder: (BuildContext context, int index) {
+                final item = recordController.records.value[index];
+                return ListTile(
+                    leading: const Icon(Icons.list),
+                    trailing: Text(
+                      item.name,
+                      style: TextStyle(
+                          color: AppConfig.secondaryColor, fontSize: 15),
+                    ),
+                    title: Text(item.name));
+              }),
+        ));
   }
 }

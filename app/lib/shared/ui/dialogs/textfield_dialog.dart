@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:app_laser_cat/shared/ui/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -35,20 +36,10 @@ class TextFieldDialog {
           const SizedBox(
             height: 30.0,
           ),
-          TextButton(
-            onPressed: onSave,
-            child: const Text(
-              'SAVE',
-              style: TextStyle(color: Colors.black, fontSize: 16.0),
-            ),
-          ),
-          TextButton(
-            onPressed: onCancel,
-            child: const Text(
-              'CANCEL',
-              style: TextStyle(color: Colors.black, fontSize: 16.0),
-            ),
-          )
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            CustomElevatedButton(onPressed: onSave, label: "SAVE"),
+            CustomElevatedButton(onPressed: onCancel, label: "CANCEL")
+          ])
         ]),
         radius: 10.0);
   }

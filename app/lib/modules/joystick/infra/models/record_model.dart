@@ -33,7 +33,7 @@ class RecordModel {
     return RecordModel(
       name: map['name'] as String,
       packages: List<CoordPackage>.from(
-        (map['packages'] as List<int>).map<CoordPackage>(
+        (map['packages'] as List).map<CoordPackage>(
           (x) => CoordPackage.fromMap(x as Map<String, dynamic>),
         ),
       ),

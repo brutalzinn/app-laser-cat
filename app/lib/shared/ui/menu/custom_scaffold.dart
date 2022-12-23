@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/shared/infra/controllers/options_menu_controller.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
@@ -12,7 +13,9 @@ class CustomScaffold extends StatelessWidget {
   final controller = Get.find<OptionsMenuController>();
   final Widget child;
   String? title;
-  Function? onWidgetBuild;
+  VoidCallback? onWidgetBuild;
+  VoidCallback? onWidgetBuildAsync;
+
   bool navigationMenu;
   bool lastPage;
 
@@ -28,7 +31,7 @@ class CustomScaffold extends StatelessWidget {
     if (isWidgetBuild == false) {
       return;
     }
-    Future.delayed(Duration.zero, onWidgetBuild!());
+    Future.delayed(Duration.zero, onWidgetBuild!);
   }
 
   @override
@@ -66,6 +69,14 @@ class CustomScaffold extends StatelessWidget {
                   ),
                   controller: controller,
                   children: [
+                      CustomVisibility(
+                        child: CustomFloatingActionButton(
+                            heroTag: "666",
+                            tooltip: "Joystick test",
+                            onPressed: () =>
+                                Get.toNamed(SharedRoutes.JoystickHomeRoute),
+                            child: const Icon(Icons.gamepad)),
+                      ),
                       CustomVisibility(
                         child: CustomFloatingActionButton(
                             heroTag: "btn2",

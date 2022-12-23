@@ -53,11 +53,12 @@ class JoystickView extends StatelessWidget {
 
                 ///TODO: the next implement is the record function.
                 ///we need to do a shared widget with joystick same we already but only for record view.
-                // TextButton(
-                //     onPressed: joystickController.toggleRecording,
-                //     child: joystickController.isRecording.value
-                //         ? const Text("Stop")
-                //         : const Text("Record")),
+                CustomElevatedButton(
+                    onPressed: joystickController.toggleRecording,
+                    label: joystickController.isRecording.value
+                        ? "Stop"
+                        : "Record"),
+
                 //get responses from esp
                 Text(joystickController.lastResponse.value)
               ],
