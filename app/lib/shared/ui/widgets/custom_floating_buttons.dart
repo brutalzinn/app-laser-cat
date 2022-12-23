@@ -16,12 +16,10 @@ class CustomFloatingButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("expanded ${controller.isExpanded.value}");
     return CustomMultipleActions(
         child: CustomFloatingActionButton(
           heroTag: "btn1",
           onPressed: () {
-            print("toggle expanded ${controller.isExpanded.value}");
             controller.toggleExpanded();
           },
           tooltip: 'Show options',

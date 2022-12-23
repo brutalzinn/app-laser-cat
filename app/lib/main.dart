@@ -11,9 +11,14 @@ import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'shared/infra/bindings/global_binding.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   Future<void> initialConfig() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.storage,
+    ].request();
     await Get.putAsync(() => SettingsPref().init());
   }
 

@@ -9,6 +9,7 @@ class RecordController extends GetxController {
   Rx<List<RecordModel>> records = Rx<List<RecordModel>>([]);
 
   Future<void> getRecordList() async {
+    print("record list");
     final fileStorage = FileProvider();
     final List<String> files =
         await fileStorage.listFilesByDir(AppConfig.recordsDir, true);

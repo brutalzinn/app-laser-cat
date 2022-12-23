@@ -1,6 +1,7 @@
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/settings/infra/controller/settings_controller.dart';
 import 'package:app_laser_cat/modules/settings/ui/widgets/settings_text.dart';
+import 'package:app_laser_cat/shared/ui/menu/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,50 +12,63 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(AppConfig.appTitle),
+    return CustomScaffold(
+        child: Column(
+      children: [
+        SettingsText(label: "IP:", controller: settingsController.socketIp),
+        const Text(
+            "Auto reconnect will change this ip VALUE. Be sure your esp 8266 is connect same network this device."),
+        SettingsText(label: "Port:", controller: settingsController.socketPort),
+        SettingsText(
+            label: "Velocity:", controller: settingsController.velocity),
+        SettingsText(
+            label: "Delivery delay(Seconds):",
+            controller: settingsController.deliveryDelay),
+        SettingsText(
+            label: "Timeout(Seconds):", controller: settingsController.timeout),
+        SettingsText(
+            label: "Auto reconnect timeout(Seconds):",
+            controller: settingsController.autoReconnectInterval),
+        SettingsText(
+            label: "Auto reconnect attemps(number):",
+            controller: settingsController.autoReconnectAttempts),
+        Obx(
+          () => Row(
+            children: [
+              const Text("Auto reconnect:"),
+              Checkbox(
+                  activeColor: AppConfig.primaryColor,
+                  value: settingsController.isAutoReconnect.value,
+                  onChanged: (bool? value) =>
+                      settingsController.onChangeAutoReconnect(value!)),
+            ],
+          ),
         ),
-        body: Column(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SettingsText(label: "IP:", controller: settingsController.socketIp),
-            const Text(
-                "Auto reconnect will change this ip VALUE. Be sure your esp 8266 is connect same network this device."),
-            SettingsText(
-                label: "Port:", controller: settingsController.socketPort),
-            SettingsText(
-                label: "Velocity:", controller: settingsController.velocity),
-            SettingsText(
-                label: "Delivery delay:",
-                controller: settingsController.deliveryDelay),
-            SettingsText(
-                label: "Timeout:", controller: settingsController.timeout),
-            SettingsText(
-                label: "Auto reconnect timeout:",
-                controller: settingsController.autoReconnectInterval),
-            Obx(
-              () => Row(
-                children: [
-                  const Text("Auto reconnect:"),
-                  Checkbox(
-                      value: settingsController.isAutoReconnect.value,
-                      onChanged: (bool? value) =>
-                          settingsController.onChangeAutoReconnect(value!)),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                    onPressed: settingsController.saveSettings,
-                    child: const Text('Save')),
-                TextButton(
-                    onPressed: settingsController.cancelSettings,
-                    child: const Text('Cancel'))
-              ],
-            )
+            ElevatedButton(
+                onPressed: settingsController.saveSettings,
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        AppConfig.primaryColor)),
+                child: Text(
+                  'Save',
+                  style: TextStyle(color: AppConfig.secondaryColor),
+                )),
+            SizedBox(width: 8),
+            ElevatedButton(
+                onPressed: settingsController.cancelSettings,
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        AppConfig.primaryColor)),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: AppConfig.secondaryColor),
+                ))
           ],
-        ));
+        )
+      ],
+    ));
   }
 }

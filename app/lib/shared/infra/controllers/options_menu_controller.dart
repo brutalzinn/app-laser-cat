@@ -35,11 +35,4 @@ class OptionsMenuController extends GetxController {
     }
     setAllVisible();
   }
-
-  // @override
-  // void dispose() {
-  //   setAllInvisible();
-  //   Get.delete<OptionsMenuController>();
-  //   super.dispose();
-  // }
 }

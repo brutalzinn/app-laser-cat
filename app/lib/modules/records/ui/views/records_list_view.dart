@@ -9,11 +9,12 @@ import 'package:get/get.dart';
 
 class RecordListView extends StatelessWidget {
   final recordController = Get.find<RecordController>();
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
         title: "Angule Records",
-        onWidgetBuild: recordController.getRecordList,
+        onWidgetBuild: () => print("start angular records searchs"),
         child: Center(
             child: ListView.builder(
                 itemCount: recordController.records.value.length,

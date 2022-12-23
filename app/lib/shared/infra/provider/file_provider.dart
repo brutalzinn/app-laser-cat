@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:path/path.dart';
 import 'package:app_laser_cat/app_config.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 
 class FileProvider {
   Future<String> get _localPath async {
@@ -37,6 +37,8 @@ class FileProvider {
     if (dirExist == false) {
       return [];
     }
+    print(dirPath.path);
+
     await for (var entity
         in dirPath.list(recursive: true, followLinks: false)) {
       baseName ? files.add(basename(entity.path)) : files.add(entity.path);

@@ -14,7 +14,6 @@ typedef ScanDetails = void Function(String? value);
 
 class HomeController extends GetxController {
   SettingsPref settings = Get.find<SettingsPref>();
-  Timer? timerController;
 
   @override
   void onInit() {
@@ -22,14 +21,16 @@ class HomeController extends GetxController {
   }
 
   void connect() {
+    print("try to find esp 8266");
     if (settings.autoReconnect.val == false) {
       print(
           "trying to connect with ${settings.socketIp.val}:${settings.socketPort.val}");
       return;
     }
-
-    timerController = Timer.periodic(
-        Duration(seconds: settings.autoReconnectInterval.val), (timer) {
+    int attemps = 0;
+    int maxAttemps = settings.autoReconnectAttempts.val;
+    Timer.periodic(Duration(seconds: settings.autoReconnectInterval.val),
+        (timer) {
       print(
           "try to find esp 8266, time of ${settings.autoReconnectInterval.val}");
       scanEspAddress(settings.socketPort.val, (value) {
@@ -37,6 +38,11 @@ class HomeController extends GetxController {
         timer.cancel();
         Get.toNamed(SharedRoutes.JoystickHomeRoute);
       });
+      if (attemps >= maxAttemps) {
+        print("cancel timer because user goes to another page");
+        timer.cancel();
+      }
+      attemps++;
     });
   }
 
@@ -69,12 +75,5 @@ class HomeController extends GetxController {
         }
       },
     );
-  }
-
-  @override
-  void dispose() {
-    print("cancel timer because user goes to another page");
-    timerController!.cancel();
-    super.dispose();
   }
 }

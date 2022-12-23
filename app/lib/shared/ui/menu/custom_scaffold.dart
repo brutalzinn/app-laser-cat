@@ -7,16 +7,22 @@ import 'package:get/get.dart';
 
 class CustomScaffold extends StatelessWidget {
   final controller = Get.find<OptionsMenuController>();
-  final Function? onWidgetBuild;
   final Widget child;
   String? title;
+  Function? onWidgetBuild;
+
   CustomScaffold({
     Key? key,
-    this.onWidgetBuild,
     this.title,
+    this.onWidgetBuild,
     required this.child,
   }) {
-    Future.delayed(Duration.zero, () => onWidgetBuild ?? onWidgetBuild);
+    bool isWidgetBuild = onWidgetBuild != null;
+    print(isWidgetBuild);
+    if (isWidgetBuild == false) {
+      return;
+    }
+    Future.delayed(Duration.zero, onWidgetBuild!());
   }
 
   @override
