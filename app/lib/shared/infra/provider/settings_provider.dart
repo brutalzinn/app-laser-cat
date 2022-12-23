@@ -13,6 +13,10 @@ class SettingsPref extends GetxService {
       1.val('deliveryDelay', getBox: () => GetStorage(storageName));
   ReadWriteValue<int> timeout =
       3.val('timeout', getBox: () => GetStorage(storageName));
+
+  ReadWriteValue<int> autoReconnectInterval =
+      5.val('autoReconnectInterval', getBox: () => GetStorage(storageName));
+
   ReadWriteValue<bool> autoReconnect =
       true.val('autoReconnect', getBox: () => GetStorage(storageName));
 

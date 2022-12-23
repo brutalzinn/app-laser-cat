@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 class CustomVisibility extends StatelessWidget {
   Widget child;
-  bool visible = false;
+  bool visible;
 
   CustomVisibility({
     Key? key,

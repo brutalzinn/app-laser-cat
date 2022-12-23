@@ -4,6 +4,6 @@ import 'package:get/get.dart';
 class RecordBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put(() => RecordController());
+    Get.put(RecordController());
   }
 }

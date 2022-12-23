@@ -2,50 +2,44 @@
 import 'package:app_laser_cat/shared/infra/controllers/options_menu_controller.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_visibility.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
 import 'package:get/get.dart';
 
 class CustomMultipleActions extends StatelessWidget {
   OptionsMenuController controller;
   List<CustomVisibility> children;
+  Widget child;
   CustomMultipleActions({
     Key? key,
     required this.controller,
     required this.children,
-  }) : super(key: key);
-
+    required this.child,
+  }) {
+    Future.delayed(Duration.zero, () => controller.updateList(children));
+  }
   @override
   Widget build(BuildContext context) {
-    controller.updateList(children);
-    return Obx(
-      () => Padding(
+    return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: controller.childVisible.value.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = controller.childVisible.value[index];
-                    return Container(
-                      alignment: Alignment.bottomLeft,
-                      child: CustomVisibility(
-                          visible: item.visible, child: item.child),
-                    );
-                  }),
-              const SizedBox(width: 8),
-              FloatingActionButton(
-                onPressed: () {
-                  controller.toggleExpanded();
-                },
-                tooltip: 'Settings',
-                child: const Icon(Icons.settings),
-              ),
-            ]),
-      ),
-    );
+        child: Obx(
+          () => Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.childList.value.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = controller.childList.value[index];
+                      return Container(
+                        alignment: Alignment.bottomLeft,
+                        child: CustomVisibility(
+                            visible: item.visible, child: item.child),
+                      );
+                    }),
+                const SizedBox(width: 8),
+                child
+              ]),
+        ));
   }
 }

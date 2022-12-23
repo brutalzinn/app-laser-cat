@@ -9,6 +9,7 @@ class SettingsController extends GetxController {
   TextEditingController socketPort = TextEditingController();
   TextEditingController velocity = TextEditingController();
   TextEditingController timeout = TextEditingController();
+  TextEditingController autoReconnectInterval = TextEditingController();
   TextEditingController deliveryDelay = TextEditingController();
   Rx<bool> isAutoReconnect = Rx<bool>(true);
   SettingsPref settings = Get.find<SettingsPref>();
@@ -25,6 +26,9 @@ class SettingsController extends GetxController {
     velocity.text = settings.velocity.val.toStringAsFixed(2);
     timeout.text = settings.timeout.val.toString();
     deliveryDelay.text = settings.deliveryDelay.val.toString();
+    autoReconnectInterval.text = settings.autoReconnectInterval.val.toString();
+
+    ///states
     isAutoReconnect.value = settings.autoReconnect.val;
   }
 
@@ -34,6 +38,7 @@ class SettingsController extends GetxController {
     settings.socketPort.val = int.parse(socketPort.text);
     settings.velocity.val = double.parse(velocity.text);
     settings.timeout.val = int.parse(timeout.text);
+    settings.autoReconnectInterval.val = int.parse(autoReconnectInterval.text);
     settings.autoReconnect.val = isAutoReconnect.value;
     // Get.to(() => HomeView());
     Get.toNamed(SharedRoutes.HomeRoute);

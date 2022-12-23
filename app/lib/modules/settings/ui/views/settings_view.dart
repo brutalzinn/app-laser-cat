@@ -2,8 +2,6 @@ import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/settings/infra/controller/settings_controller.dart';
 import 'package:app_laser_cat/modules/settings/ui/widgets/settings_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 
 class SettingsView extends StatelessWidget {
@@ -31,6 +29,9 @@ class SettingsView extends StatelessWidget {
                 controller: settingsController.deliveryDelay),
             SettingsText(
                 label: "Timeout:", controller: settingsController.timeout),
+            SettingsText(
+                label: "Auto reconnect timeout:",
+                controller: settingsController.autoReconnectInterval),
             Obx(
               () => Row(
                 children: [

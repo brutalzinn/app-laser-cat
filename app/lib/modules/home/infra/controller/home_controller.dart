@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
@@ -24,10 +26,16 @@ class HomeController extends GetxController {
           "trying to connect with ${settings.socketIp.val}:${settings.socketPort.val}");
       return;
     }
-    print("try to find esp 8266");
-    scanEspAddress(settings.socketPort.val, (value) {
-      settings.socketIp.val = value!;
-      Get.toNamed(SharedRoutes.JoystickHomeRoute);
+
+    Timer.periodic(Duration(seconds: settings.autoReconnectInterval.val),
+        (timer) {
+      print(
+          "try to find esp 8266, time of ${settings.autoReconnectInterval.val}");
+      scanEspAddress(settings.socketPort.val, (value) {
+        settings.socketIp.val = value!;
+        timer.cancel();
+        Get.toNamed(SharedRoutes.JoystickHomeRoute);
+      });
     });
   }
 

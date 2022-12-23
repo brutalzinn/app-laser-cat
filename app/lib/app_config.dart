@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AppConfig {
   // static String socketIp = "localhost";
   // static int port = 7777;
@@ -6,4 +8,7 @@ class AppConfig {
   static bool devMode = true;
   static String recordsDir = 'records';
   static String get appTitle => "$appName V${appVersion}";
+
+  static Color primaryColor = Colors.black;
+  static Color secondaryColor = Colors.white;
 }
