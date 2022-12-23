@@ -8,10 +8,12 @@ import 'package:get/get.dart';
 class CustomScaffold extends StatelessWidget {
   final controller = Get.find<OptionsMenuController>();
   final Function? onWidgetBuild;
-  Widget child;
+  final Widget child;
+  String? title;
   CustomScaffold({
     Key? key,
     this.onWidgetBuild,
+    this.title,
     required this.child,
   }) {
     Future.delayed(Duration.zero, () => onWidgetBuild ?? onWidgetBuild);
@@ -29,7 +31,7 @@ class CustomScaffold extends StatelessWidget {
       child: Scaffold(
           appBar: AppBar(
             backgroundColor: AppConfig.primaryColor,
-            title: Text(AppConfig.appTitle),
+            title: Text(title ?? AppConfig.appTitle),
           ),
           body: Padding(padding: const EdgeInsets.all(12.0), child: child),
           floatingActionButtonLocation:

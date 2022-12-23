@@ -11,30 +11,27 @@ import '../../../../app_config.dart';
 
 class HomeView extends StatelessWidget {
   final homeController = Get.find<HomeController>();
-  HomeView({super.key}) {
-    Future.delayed(Duration.zero, () => homeController.connect());
-  }
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-        //      onWidgetBuild: homeController.connect,
+        onWidgetBuild: homeController.connect,
         child: Center(
             child: Column(
-      children: [
-        Text(
-          homeController.getAutoConnectStatus(),
-          style: const TextStyle(fontSize: 25),
-        ),
-        ElevatedButton(
-            onPressed: homeController.connect,
-            style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(AppConfig.primaryColor)),
-            child: Text(
-              'Connect',
-              style: TextStyle(color: AppConfig.secondaryColor),
-            ))
-      ],
-    )));
+          children: [
+            Text(
+              homeController.getAutoConnectStatus(),
+              style: const TextStyle(fontSize: 25),
+            ),
+            ElevatedButton(
+                onPressed: homeController.connect,
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        AppConfig.primaryColor)),
+                child: Text(
+                  'Connect',
+                  style: TextStyle(color: AppConfig.secondaryColor),
+                ))
+          ],
+        )));
   }
 }

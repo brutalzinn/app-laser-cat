@@ -8,7 +8,7 @@ class FileProvider {
     final directory = await getApplicationDocumentsDirectory();
     return AppConfig.devMode == false
         ? directory.path
-        : "/storage/emulated/0/Download"; //directory.path;
+        : "/storage/emulated/0/Download";
   }
 
   Future<File> _localFile(String fileName) async {
@@ -30,10 +30,15 @@ class FileProvider {
   Future<List<String>> listFilesByDir(String directoryName,
       [bool baseName = false]) async {
     List<String> files = [];
-    final path = await _localPath;
 
-    await for (var entity in Directory("$path/$directoryName")
-        .list(recursive: true, followLinks: false)) {
+    final path = await _localPath;
+    final dirPath = Directory("$path/$directoryName");
+    final dirExist = await dirPath.exists();
+    if (dirExist == false) {
+      return [];
+    }
+    await for (var entity
+        in dirPath.list(recursive: true, followLinks: false)) {
       baseName ? files.add(basename(entity.path)) : files.add(entity.path);
     }
     return files;

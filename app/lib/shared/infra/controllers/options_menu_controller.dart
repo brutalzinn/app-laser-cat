@@ -6,25 +6,26 @@ class OptionsMenuController extends GetxController {
   Rx<bool> isExpanded = Rx<bool>(false);
 
   void updateList(List<CustomVisibility> children) {
+    isExpanded.value = false;
     childList.value = children;
   }
 
   void setAllInvisible() {
-    isExpanded.value = false;
     List<CustomVisibility> list = childList.value;
     childList.value = list.map((element) {
       element.visible = false;
       return element;
     }).toList();
+    isExpanded.value = false;
   }
 
   void setAllVisible() {
-    isExpanded.value = true;
     List<CustomVisibility> list = childList.value;
     childList.value = list.map((element) {
       element.visible = true;
       return element;
     }).toList();
+    isExpanded.value = true;
   }
 
   void toggleExpanded() {

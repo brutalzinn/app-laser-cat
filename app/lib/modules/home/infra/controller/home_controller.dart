@@ -14,6 +14,7 @@ typedef ScanDetails = void Function(String? value);
 
 class HomeController extends GetxController {
   SettingsPref settings = Get.find<SettingsPref>();
+  Timer? timerController;
 
   @override
   void onInit() {
@@ -27,8 +28,8 @@ class HomeController extends GetxController {
       return;
     }
 
-    Timer.periodic(Duration(seconds: settings.autoReconnectInterval.val),
-        (timer) {
+    timerController = Timer.periodic(
+        Duration(seconds: settings.autoReconnectInterval.val), (timer) {
       print(
           "try to find esp 8266, time of ${settings.autoReconnectInterval.val}");
       scanEspAddress(settings.socketPort.val, (value) {
@@ -68,5 +69,12 @@ class HomeController extends GetxController {
         }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    print("cancel timer because user goes to another page");
+    timerController!.cancel();
+    super.dispose();
   }
 }
