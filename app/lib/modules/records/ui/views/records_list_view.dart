@@ -1,9 +1,7 @@
 import 'dart:core';
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
-import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/shared/ui/menu/custom_scaffold.dart';
-import 'package:app_laser_cat/shared/ui/widgets/custom_floating_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +11,8 @@ class RecordListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
+        navigationMenu: true,
+        lastPage: true,
         title: "Angule Records",
         onWidgetBuild: () => print("start angular records searchs"),
         child: Center(

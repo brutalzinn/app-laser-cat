@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/joystick/infra/models/coord_package.dart';
+import 'package:app_laser_cat/modules/joystick/infra/models/record_model.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/textfield_dialog.dart';
@@ -123,10 +124,10 @@ class JoystickController extends GetxController {
             title: "Save as",
             onSave: () async {
               final fileProvider = FileProvider();
-              final mapper = packages.value;
-              fileProvider.write(
-                  "records/${recordName.text}.json", json.encode(mapper));
-              print("saving as ${recordName.text}.json");
+              String name = recordName.text.toLowerCase();
+              final mapper = RecordModel(name: name, packages: packages.value);
+              fileProvider.write("records/${name}.json", json.encode(mapper));
+              print("saving as ${name}.json");
               Get.back();
             },
             onCancel: () => Get.back(),

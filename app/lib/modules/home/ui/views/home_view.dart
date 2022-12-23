@@ -15,6 +15,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScaffold(
         onWidgetBuild: homeController.connect,
+        navigationMenu: true,
         child: Center(
             child: Column(
           children: [

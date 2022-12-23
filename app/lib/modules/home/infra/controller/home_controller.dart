@@ -31,7 +31,7 @@ class HomeController extends GetxController {
     int maxAttemps = settings.autoReconnectAttempts.val;
     Timer.periodic(Duration(seconds: settings.autoReconnectInterval.val),
         (timer) {
-      print("try to find esp 8266, attemp of ${attemps}/${maxAttemps}");
+      //print("try to find esp 8266, attemp of ${attemps}/${maxAttemps}");
       scanEspAddress(settings.socketPort.val, (value) {
         settings.socketIp.val = value!;
         timer.cancel();
