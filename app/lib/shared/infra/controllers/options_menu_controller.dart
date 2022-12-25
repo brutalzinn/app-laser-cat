@@ -5,6 +5,9 @@ class OptionsMenuController extends GetxController {
   Rx<List<CustomVisibility>> childList = Rx<List<CustomVisibility>>([]);
   Rx<bool> isExpanded = Rx<bool>(false);
 
+  @override
+  void onInit() {}
+
   void updateList(List<CustomVisibility> children) {
     isExpanded.value = false;
     childList.value = children;

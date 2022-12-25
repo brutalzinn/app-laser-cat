@@ -6,15 +6,15 @@ import 'package:get/get.dart';
 
 class CustomMultipleActions extends StatelessWidget {
   OptionsMenuController controller;
-  List<CustomVisibility> children;
+  // List<CustomVisibility> children;
   Widget child;
   CustomMultipleActions({
-    Key? key,
+    super.key,
     required this.controller,
-    required this.children,
+    // required this.children,
     required this.child,
   }) {
-    Future.delayed(Duration.zero, () => controller.updateList(children));
+    // Future.delayed(Duration.zero, () => controller.updateList(children));
   }
   @override
   Widget build(BuildContext context) {

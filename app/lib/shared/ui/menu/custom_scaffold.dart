@@ -10,21 +10,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomScaffold extends StatelessWidget {
-  final controller = Get.find<OptionsMenuController>();
+  OptionsMenuController? controller;
+
   final Widget child;
   String? title;
   VoidCallback? onWidgetBuild;
-  List<CustomVisibility>? children = [];
+  List<CustomVisibility>? children;
   bool defaultNavigationMenu;
   bool lastPage;
-
   bool _useNavigationOptions = false;
-  bool _useCustomChildren = false;
-
-  bool _useDefaultNavigationOptions = false;
 
   CustomScaffold({
-    Key? key,
+    super.key,
     required this.child,
     this.title,
     this.onWidgetBuild,
@@ -32,18 +29,25 @@ class CustomScaffold extends StatelessWidget {
     this.defaultNavigationMenu = false,
     this.lastPage = false,
   }) {
-    _useCustomChildren = children != null;
-    _useDefaultNavigationOptions = defaultNavigationMenu;
-    _useNavigationOptions = _useCustomChildren || _useDefaultNavigationOptions;
     bool isWidgetBuild = onWidgetBuild != null;
-    if (isWidgetBuild == false) {
-      return;
-    }
-    Future.delayed(Duration.zero, onWidgetBuild!);
+    _useNavigationOptions =
+        defaultNavigationMenu || children != null && children!.isNotEmpty;
+    Future.delayed(Duration.zero, () {
+      if (defaultNavigationMenu) {
+        controller!.updateList(defaultNavigationOptions);
+      } else {
+        controller!.updateList(customNavigationOptions);
+      }
+
+      if (isWidgetBuild == false) {
+        return;
+      }
+      onWidgetBuild!();
+    });
   }
 
   List<CustomVisibility> get defaultNavigationOptions {
-    return List<CustomVisibility>.from([
+    return [
       CustomVisibility(
         child: CustomFloatingActionButton(
             heroTag: "666",
@@ -64,15 +68,17 @@ class CustomScaffold extends StatelessWidget {
               tooltip: "Settings",
               onPressed: () => Get.toNamed(SharedRoutes.SettingsRoute),
               child: const Icon(Icons.settings))),
-    ]);
+    ];
   }
 
   List<CustomVisibility> get customNavigationOptions {
-    return List<CustomVisibility>.from(children ?? []);
+    return children ?? [];
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(OptionsMenuController());
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -91,6 +97,7 @@ class CustomScaffold extends StatelessWidget {
               : null,
           floatingActionButton: _useNavigationOptions
               ? CustomMultipleActions(
+                  controller: controller,
                   child: CustomFloatingActionButton(
                     heroTag: "btn1",
                     onPressed: () {
@@ -105,12 +112,7 @@ class CustomScaffold extends StatelessWidget {
                         ? const Icon(Icons.arrow_back)
                         : const Icon(Icons.more_horiz),
                   ),
-                  controller: controller,
-                  children: [
-                      ...customNavigationOptions,
-                      if (_useDefaultNavigationOptions)
-                        ...defaultNavigationOptions,
-                    ])
+                )
               : null),
     );
   }
