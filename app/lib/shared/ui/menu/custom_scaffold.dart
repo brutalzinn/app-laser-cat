@@ -14,24 +14,61 @@ class CustomScaffold extends StatelessWidget {
   final Widget child;
   String? title;
   VoidCallback? onWidgetBuild;
-  VoidCallback? onWidgetBuildAsync;
-
-  bool navigationMenu;
+  List<CustomVisibility>? children = [];
+  bool defaultNavigationMenu;
   bool lastPage;
+
+  bool _useNavigationOptions = false;
+  bool _useCustomChildren = false;
+
+  bool _useDefaultNavigationOptions = false;
 
   CustomScaffold({
     Key? key,
     required this.child,
     this.title,
     this.onWidgetBuild,
-    this.navigationMenu = false,
+    this.children,
+    this.defaultNavigationMenu = false,
     this.lastPage = false,
   }) {
+    _useCustomChildren = children != null;
+    _useDefaultNavigationOptions = defaultNavigationMenu;
+    _useNavigationOptions = _useCustomChildren || _useDefaultNavigationOptions;
     bool isWidgetBuild = onWidgetBuild != null;
     if (isWidgetBuild == false) {
       return;
     }
     Future.delayed(Duration.zero, onWidgetBuild!);
+  }
+
+  List<CustomVisibility> get defaultNavigationOptions {
+    return List<CustomVisibility>.from([
+      CustomVisibility(
+        child: CustomFloatingActionButton(
+            heroTag: "666",
+            tooltip: "Joystick test",
+            onPressed: () => Get.toNamed(SharedRoutes.JoystickHomeRoute),
+            child: const Icon(Icons.gamepad)),
+      ),
+      CustomVisibility(
+        child: CustomFloatingActionButton(
+            heroTag: "btn2",
+            tooltip: "Records",
+            onPressed: () => Get.toNamed(SharedRoutes.RecordRoute),
+            child: const Icon(Icons.receipt_rounded)),
+      ),
+      CustomVisibility(
+          child: CustomFloatingActionButton(
+              heroTag: "btn3",
+              tooltip: "Settings",
+              onPressed: () => Get.toNamed(SharedRoutes.SettingsRoute),
+              child: const Icon(Icons.settings))),
+    ]);
+  }
+
+  List<CustomVisibility> get customNavigationOptions {
+    return List<CustomVisibility>.from(children ?? []);
   }
 
   @override
@@ -49,9 +86,10 @@ class CustomScaffold extends StatelessWidget {
             title: Text(title ?? AppConfig.appTitle),
           ),
           body: Padding(padding: const EdgeInsets.all(12.0), child: child),
-          floatingActionButtonLocation:
-              navigationMenu ? FloatingActionButtonLocation.centerFloat : null,
-          floatingActionButton: navigationMenu
+          floatingActionButtonLocation: _useNavigationOptions
+              ? FloatingActionButtonLocation.centerFloat
+              : null,
+          floatingActionButton: _useNavigationOptions
               ? CustomMultipleActions(
                   child: CustomFloatingActionButton(
                     heroTag: "btn1",
@@ -69,29 +107,9 @@ class CustomScaffold extends StatelessWidget {
                   ),
                   controller: controller,
                   children: [
-                      CustomVisibility(
-                        child: CustomFloatingActionButton(
-                            heroTag: "666",
-                            tooltip: "Joystick test",
-                            onPressed: () =>
-                                Get.toNamed(SharedRoutes.JoystickHomeRoute),
-                            child: const Icon(Icons.gamepad)),
-                      ),
-                      CustomVisibility(
-                        child: CustomFloatingActionButton(
-                            heroTag: "btn2",
-                            tooltip: "Records",
-                            onPressed: () =>
-                                Get.toNamed(SharedRoutes.RecordRoute),
-                            child: const Icon(Icons.receipt_rounded)),
-                      ),
-                      CustomVisibility(
-                          child: CustomFloatingActionButton(
-                              heroTag: "btn3",
-                              tooltip: "Settings",
-                              onPressed: () =>
-                                  Get.toNamed(SharedRoutes.SettingsRoute),
-                              child: const Icon(Icons.settings))),
+                      ...customNavigationOptions,
+                      if (_useDefaultNavigationOptions)
+                        ...defaultNavigationOptions,
                     ])
               : null),
     );

@@ -26,4 +26,8 @@ class RecordController extends GetxController {
       records.value.add(record);
     }
   }
+
+  RecordModel _getRecordById(int index) {
+    return records.value[index];
+  }
 }

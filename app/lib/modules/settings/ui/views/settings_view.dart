@@ -13,7 +13,7 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-        navigationMenu: true,
+        defaultNavigationMenu: true,
         lastPage: true,
         child: ListView(
           children: [

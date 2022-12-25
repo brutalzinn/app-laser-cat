@@ -1,0 +1,1 @@
+enum ItemRecordEnum { delay, coord }
