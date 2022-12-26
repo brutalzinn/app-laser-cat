@@ -17,7 +17,7 @@ class RecordListView extends StatelessWidget {
         children: [
           CustomVisibility(
               child: CustomFloatingActionButton(
-                  heroTag: "btn3",
+                  heroTag: "btn555",
                   tooltip: "Add record",
                   onPressed: () => Get.toNamed(SharedRoutes.SettingsRoute),
                   child: const Icon(Icons.add))),

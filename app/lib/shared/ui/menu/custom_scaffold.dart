@@ -4,14 +4,12 @@ import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/shared/infra/controllers/options_menu_controller.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_floating_action_button.dart';
-import 'package:app_laser_cat/shared/ui/widgets/custom_multiple_actions.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_visibility.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomScaffold extends StatelessWidget {
-  OptionsMenuController? controller;
-
+  OptionsMenuController controller = Get.find<OptionsMenuController>();
   final Widget child;
   String? title;
   VoidCallback? onWidgetBuild;
@@ -32,25 +30,18 @@ class CustomScaffold extends StatelessWidget {
     bool isWidgetBuild = onWidgetBuild != null;
     _useNavigationOptions =
         defaultNavigationMenu || children != null && children!.isNotEmpty;
-    Future.delayed(Duration.zero, () {
-      if (defaultNavigationMenu) {
-        controller!.updateList(defaultNavigationOptions);
-      } else {
-        controller!.updateList(customNavigationOptions);
-      }
-
-      if (isWidgetBuild == false) {
-        return;
-      }
-      onWidgetBuild!();
-    });
+    Future.delayed(Duration.zero,
+        () => controller.createList(children ?? defaultNavigationOptions));
+    if (isWidgetBuild == false) {
+      return;
+    }
+    Future.delayed(Duration.zero, onWidgetBuild!);
   }
-
-  List<CustomVisibility> get defaultNavigationOptions {
+  static List<CustomVisibility> get defaultNavigationOptions {
     return [
       CustomVisibility(
         child: CustomFloatingActionButton(
-            heroTag: "666",
+            heroTag: "btn1",
             tooltip: "Joystick test",
             onPressed: () => Get.toNamed(SharedRoutes.JoystickHomeRoute),
             child: const Icon(Icons.gamepad)),
@@ -59,7 +50,8 @@ class CustomScaffold extends StatelessWidget {
         child: CustomFloatingActionButton(
             heroTag: "btn2",
             tooltip: "Records",
-            onPressed: () => Get.toNamed(SharedRoutes.RecordRoute),
+            onPressed: () =>
+                Get.toNamed(SharedRoutes.RecordRoute, preventDuplicates: false),
             child: const Icon(Icons.receipt_rounded)),
       ),
       CustomVisibility(
@@ -72,48 +64,61 @@ class CustomScaffold extends StatelessWidget {
   }
 
   List<CustomVisibility> get customNavigationOptions {
-    return children ?? [];
+    return children ?? defaultNavigationOptions;
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(OptionsMenuController());
-
+    Future.delayed(Duration.zero,
+        () => controller.createList(children ?? defaultNavigationOptions));
     return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        if (controller.isExpanded.value) {
-          controller.setAllInvisible();
-        }
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: AppConfig.primaryColor,
-            title: Text(title ?? AppConfig.appTitle),
-          ),
-          body: Padding(padding: const EdgeInsets.all(12.0), child: child),
-          floatingActionButtonLocation: _useNavigationOptions
-              ? FloatingActionButtonLocation.centerFloat
-              : null,
-          floatingActionButton: _useNavigationOptions
-              ? CustomMultipleActions(
-                  controller: controller,
-                  child: CustomFloatingActionButton(
-                    heroTag: "btn1",
-                    onPressed: () {
-                      if (lastPage) {
-                        Get.back();
-                        return;
-                      }
-                      controller.toggleExpanded();
-                    },
-                    tooltip: 'Show options',
-                    child: lastPage
-                        ? const Icon(Icons.arrow_back)
-                        : const Icon(Icons.more_horiz),
-                  ),
-                )
-              : null),
-    );
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          controller.createList(children ?? defaultNavigationOptions);
+          if (controller.isExpanded.value) {
+            controller.setAllInvisible();
+          }
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: AppConfig.primaryColor,
+              title: Text(title ?? AppConfig.appTitle),
+            ),
+            body: Padding(padding: const EdgeInsets.all(12.0), child: child),
+            floatingActionButtonLocation: _useNavigationOptions
+                ? FloatingActionButtonLocation.centerFloat
+                : null,
+            floatingActionButton: _useNavigationOptions
+                ? Obx(() => Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: controller.childList.value.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final item = controller.childList.value[index];
+                                return Container(
+                                    alignment: Alignment.bottomLeft,
+                                    child: item);
+                              }),
+                          CustomFloatingActionButton(
+                            onPressed: () {
+                              if (lastPage) {
+                                Get.back();
+                                return;
+                              }
+                              controller.createList(
+                                  children ?? defaultNavigationOptions);
+                              controller.toggleExpanded();
+                            },
+                            tooltip: 'Show options',
+                            child: lastPage
+                                ? const Icon(Icons.arrow_back)
+                                : const Icon(Icons.more_horiz),
+                          ),
+                        ]))
+                : null));
   }
 }
