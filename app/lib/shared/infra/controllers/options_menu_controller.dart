@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 class OptionsMenuController extends GetxController {
   RxList<CustomVisibility> childrenList = RxList<CustomVisibility>([]);
-  List<CustomVisibility> tempList = [];
   RxBool isExpanded = RxBool(false);
   static String getBuilderKey = "custom_scatfold";
 
@@ -12,51 +11,41 @@ class OptionsMenuController extends GetxController {
   /// IF WE REALLY NEEDS THIS, WHY DONT USE ACTUALLY WIDGETS THAT DO THIS? OH MY GOD!
   OptionsMenuController(List<CustomVisibility> children) {
     updateWidgetList(children);
-    print(
-        "INIT CLASS LENGHT children:  ${children.length} EXPANDED: ${isExpanded.value}");
   }
 
   void updateWidgetList(List<CustomVisibility> children) {
-    tempList = children;
-    print("update widget");
+    print("update widget ${children.length} - ${isExpanded.value}");
+    childrenList.value = children;
+    //refreshAll();
   }
 
   void setAllInvisible() {
-    childrenList.clear();
-    print("all visible false");
-    for (var e in tempList) {
-      childrenList.add(CustomVisibility(visible: false, child: e.child));
+    for (var e in childrenList) {
+      var index = childrenList.indexOf(e);
+      childrenList[index].visible = false;
     }
     isExpanded.value = false;
-    refreshAll();
   }
 
   void setAllVisible() {
-    childrenList.clear();
-    print("all visible true");
-    for (var e in tempList) {
-      childrenList.add(CustomVisibility(visible: true, child: e.child));
+    for (var e in childrenList) {
+      var index = childrenList.indexOf(e);
+      childrenList[index].visible = true;
     }
     isExpanded.value = true;
-    refreshAll();
   }
 
   void toggleExpanded() {
     if (isExpanded.value) {
       setAllInvisible();
+      refreshAll();
       return;
     }
     setAllVisible();
+    refreshAll();
   }
 
   void refreshAll() {
     update([getBuilderKey]);
   }
-
-  // @override
-  // void dispose() {
-  //   print("on dispose optins");
-  //   childrenList.clear();
-  //   super.dispose();
-  // }
 }

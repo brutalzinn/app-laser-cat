@@ -35,24 +35,16 @@ class CustomScaffold extends StatelessWidget {
     return GetBuilder<OptionsMenuController>(
         id: "custom_scatfold",
         init: OptionsMenuController(children),
-        // didUpdateWidget: (oldWidget, state) {
-
-        // },
-        initState: (state) {
-          Future.delayed(Duration.zero, () {
-            state.controller?.updateWidgetList(children);
-            state.controller?.setAllInvisible();
-          });
-        },
         builder: (controller) {
           controller.updateWidgetList(children);
-
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            controller.setAllInvisible();
+          });
           return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                if (controller.isExpanded.value) {
-                  controller.setAllInvisible();
-                }
+                controller.setAllInvisible();
+                controller.refreshAll();
               },
               child: Scaffold(
                   appBar: AppBar(
@@ -78,11 +70,14 @@ class CustomScaffold extends StatelessWidget {
                                     final item = controller.childrenList[index];
                                     return Container(
                                         alignment: Alignment.bottomLeft,
-                                        child: item);
+                                        child: CustomVisibility(
+                                            visible: item.visible,
+                                            child: item.child));
                                   }),
                               SizedBox(width: 8),
                               CustomFloatingActionButton(
                                 onPressed: () {
+                                  controller.updateWidgetList(children);
                                   if (lastPage) {
                                     Get.back();
                                     return;
