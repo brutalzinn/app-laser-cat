@@ -2,6 +2,7 @@ import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/settings/infra/controller/settings_controller.dart';
 import 'package:app_laser_cat/modules/settings/ui/widgets/settings_text.dart';
 import 'package:app_laser_cat/shared/ui/menu/custom_scaffold.dart';
+import 'package:app_laser_cat/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,7 +14,7 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-        defaultNavigationMenu: true,
+        children: AppConfig.getDefaultNavigationActions,
         lastPage: true,
         child: ListView(
           children: [

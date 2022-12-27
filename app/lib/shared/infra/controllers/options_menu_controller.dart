@@ -2,45 +2,44 @@ import 'package:app_laser_cat/shared/ui/widgets/custom_visibility.dart';
 import 'package:get/get.dart';
 
 class OptionsMenuController extends GetxController {
-  Rx<List<CustomVisibility>> childList = Rx<List<CustomVisibility>>([]);
-  Rx<bool> isExpanded = Rx<bool>(false);
+  RxList<CustomVisibility> childrenList = RxList<CustomVisibility>([]);
+  List<CustomVisibility> tempList = [];
+  RxBool isExpanded = RxBool(false);
+  static String getBuilderKey = "custom_scatfold";
 
-  // OptionsMenuController() {
-  //   print("create list with ${children.length} ${isExpanded.value}");
-  //   isExpanded.value = false;
-  //   childList.value = children;
-  // }
-
-  void createList(List<CustomVisibility> children) {
+  ///OH MY GOD. THREE DAYS AND STILL ZERO ACCIDENTS HERE.
+  /// WE STILL THINKS THAT WE NEED A GLOBAL WIDGET THAT HANDLE STATE THAT HIDDE AND SHOW ICON BUTTONS ON SCATFOLD.
+  /// IF WE REALLY NEEDS THIS, WHY DONT USE ACTUALLY WIDGETS THAT DO THIS? OH MY GOD!
+  OptionsMenuController(List<CustomVisibility> children) {
+    updateWidgetList(children);
     print("LENGHT children:  ${children.length} EXPANDED: ${isExpanded.value}");
-    childList.value = children;
-    //isExpanded.value = false;
+  }
+
+  void updateWidgetList(List<CustomVisibility> children) {
+    tempList = children;
   }
 
   void setAllInvisible() {
-    print("toggle all invisible ${isExpanded.value}");
-    List<CustomVisibility> list = childList.value;
-    childList.value = list.map((element) {
-      element.visible = false;
-      return element;
-    }).toList();
     isExpanded.value = false;
+    childrenList.clear();
+    print("all visible false");
+    for (var e in tempList) {
+      childrenList.add(CustomVisibility(visible: false, child: e.child));
+    }
+    update([getBuilderKey]);
   }
 
   void setAllVisible() {
-    print("toggle all visible ${isExpanded.value}");
-    List<CustomVisibility> list = childList.value;
-    childList.value = list.map((element) {
-      element.visible = true;
-      return element;
-    }).toList();
-
     isExpanded.value = true;
+    childrenList.clear();
+    print("all visible true");
+    for (var e in tempList) {
+      childrenList.add(CustomVisibility(visible: true, child: e.child));
+    }
+    update([getBuilderKey]);
   }
 
   void toggleExpanded() {
-    print(
-        "toggle expanded ${isExpanded.value} LENGHT: ${childList.value.length}");
     if (isExpanded.value) {
       setAllInvisible();
       return;
@@ -48,11 +47,10 @@ class OptionsMenuController extends GetxController {
     setAllVisible();
   }
 
-//   @override
-//   void dispose() {
-//     print("on dispose optins");
-//     childList.value = [];
-//     super.dispose();
-//   }
-// }
+  // @override
+  // void dispose() {
+  //   print("on dispose optins");
+  //   childrenList.clear();
+  //   super.dispose();
+  // }
 }

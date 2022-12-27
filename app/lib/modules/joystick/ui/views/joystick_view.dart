@@ -14,6 +14,7 @@ class JoystickView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
+      children: AppConfig.getDefaultNavigationActions,
       title: "Joystick controller",
 
       ///TODO: This is a mistake of planning. Because when i need to put a new floating button,

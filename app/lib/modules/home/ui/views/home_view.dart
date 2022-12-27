@@ -13,7 +13,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScaffold(
         onWidgetBuild: homeController.connect,
-        defaultNavigationMenu: true,
+        children: AppConfig.getDefaultNavigationActions,
         child: Center(
             child: Column(
           children: [

@@ -25,9 +25,9 @@ class CustomMultipleActions extends StatelessWidget {
                 ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
-                    itemCount: controller.childList.value.length,
+                    itemCount: controller.childrenList.value.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final item = controller.childList.value[index];
+                      final item = controller.childrenList.value[index];
                       return Container(
                         alignment: Alignment.bottomLeft,
                         child: CustomVisibility(
