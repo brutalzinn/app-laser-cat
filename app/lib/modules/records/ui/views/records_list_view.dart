@@ -1,7 +1,9 @@
 import 'dart:core';
 import 'package:app_laser_cat/app_config.dart';
+import 'package:app_laser_cat/modules/joystick/infra/controller/joystick_controller.dart';
 import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
-import 'package:app_laser_cat/shared/infra/routes/routes.dart';
+import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
+import 'package:app_laser_cat/shared/ui/dialogs/joystick_dialog.dart';
 import 'package:app_laser_cat/shared/ui/menu/custom_scaffold.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_floating_action_button.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_visibility.dart';
@@ -10,16 +12,36 @@ import 'package:get/get.dart';
 
 class RecordListView extends StatelessWidget {
   final recordController = Get.find<RecordController>();
+  final joystickController = Get.find<JoystickController>();
 
+  TextEditingController recordName = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
         children: [
           CustomVisibility(
               child: CustomFloatingActionButton(
-                  heroTag: "btn555",
+                  heroTag: "fsdfsfsdfds",
                   tooltip: "Add record",
-                  onPressed: () => Get.toNamed(SharedRoutes.SettingsRoute),
+                  onPressed: () {
+                    JoystickDialog(
+                      title: "Joystick Dialog",
+                      controller: recordName,
+                      joystickController: joystickController,
+                      onSave: () {
+                        //  final fileProvider = FileProvider();
+                        //       String name = recordName.text.toLowerCase();
+                        // final mapper = RecordModel(
+                        //     name: name, packages: packages.value);
+                        // fileProvider.write(
+                        //     "records/${name}.json", mapper.toJson());
+                        //  print("saving as ${name}.json");
+                        //    Get.back();
+                      },
+                      onCancel: () => Get.back(),
+                      label: "File name",
+                    ).showDialog();
+                  },
                   child: const Icon(Icons.add))),
         ],
         title: "Angule Records",
