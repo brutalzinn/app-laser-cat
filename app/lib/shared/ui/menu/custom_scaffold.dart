@@ -13,7 +13,7 @@ class CustomScaffold extends StatelessWidget {
   VoidCallback? onWidgetBuild;
   List<CustomVisibility> children;
   bool lastPage;
-  bool useNavigationMenu = true;
+  bool useNavigationMenu = false;
 
   CustomScaffold({
     required this.child,
@@ -22,6 +22,7 @@ class CustomScaffold extends StatelessWidget {
     this.onWidgetBuild,
     this.lastPage = false,
   }) {
+    useNavigationMenu = children.isNotEmpty;
     bool isWidgetBuild = onWidgetBuild != null;
     if (isWidgetBuild == false) {
       return;
@@ -34,6 +35,15 @@ class CustomScaffold extends StatelessWidget {
     return GetBuilder<OptionsMenuController>(
         id: "custom_scatfold",
         init: OptionsMenuController(children),
+        // didUpdateWidget: (oldWidget, state) {
+
+        // },
+        initState: (state) {
+          Future.delayed(Duration.zero, () {
+            state.controller?.updateWidgetList(children);
+            state.controller?.setAllInvisible();
+          });
+        },
         builder: (controller) {
           controller.updateWidgetList(children);
 
@@ -84,6 +94,7 @@ class CustomScaffold extends StatelessWidget {
                                     ? const Icon(Icons.arrow_back)
                                     : const Icon(Icons.more_horiz),
                               ),
+                              SizedBox(width: 8),
                             ])
                       : null));
         });

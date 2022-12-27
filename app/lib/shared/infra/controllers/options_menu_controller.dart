@@ -12,31 +12,33 @@ class OptionsMenuController extends GetxController {
   /// IF WE REALLY NEEDS THIS, WHY DONT USE ACTUALLY WIDGETS THAT DO THIS? OH MY GOD!
   OptionsMenuController(List<CustomVisibility> children) {
     updateWidgetList(children);
-    print("LENGHT children:  ${children.length} EXPANDED: ${isExpanded.value}");
+    print(
+        "INIT CLASS LENGHT children:  ${children.length} EXPANDED: ${isExpanded.value}");
   }
 
   void updateWidgetList(List<CustomVisibility> children) {
     tempList = children;
+    print("update widget");
   }
 
   void setAllInvisible() {
-    isExpanded.value = false;
     childrenList.clear();
     print("all visible false");
     for (var e in tempList) {
       childrenList.add(CustomVisibility(visible: false, child: e.child));
     }
-    update([getBuilderKey]);
+    isExpanded.value = false;
+    refreshAll();
   }
 
   void setAllVisible() {
-    isExpanded.value = true;
     childrenList.clear();
     print("all visible true");
     for (var e in tempList) {
       childrenList.add(CustomVisibility(visible: true, child: e.child));
     }
-    update([getBuilderKey]);
+    isExpanded.value = true;
+    refreshAll();
   }
 
   void toggleExpanded() {
@@ -45,6 +47,10 @@ class OptionsMenuController extends GetxController {
       return;
     }
     setAllVisible();
+  }
+
+  void refreshAll() {
+    update([getBuilderKey]);
   }
 
   // @override
