@@ -28,8 +28,8 @@ class AppConfig {
       CustomVisibility(
         child: CustomFloatingActionButton(
             tooltip: "Records",
-            onPressed: () =>
-                Get.toNamed(SharedRoutes.RecordRoute, preventDuplicates: false),
+            onPressed: () => Get.toNamed(SharedRoutes.RecordListRoute,
+                preventDuplicates: false),
             child: const Icon(Icons.receipt_rounded)),
       ),
       CustomVisibility(

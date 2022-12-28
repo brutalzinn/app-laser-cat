@@ -1,31 +1,47 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
 import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
 import 'package:collection/collection.dart';
+import 'package:uuid/uuid.dart';
+
+import 'record_types/record_options.dart';
 
 class RecordModel {
+  String? id;
   final String name;
   final List<GenericItemModel> itens;
+  final RecordOptions? options;
 
   RecordModel(
     this.name,
-    this.itens,
-  );
+    this.itens, [
+    this.id,
+    this.options,
+  ]) {
+    id = const Uuid().v4();
+  }
 
   RecordModel copyWith({
+    String? id,
     String? name,
     List<GenericItemModel>? itens,
+    RecordOptions? options,
   }) {
     return RecordModel(
       name ?? this.name,
       itens ?? this.itens,
+      id ?? this.id,
+      options ?? this.options,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'name': name,
       'itens': itens.map((x) => x.toMap()).toList(),
+      'options': options?.toMap(),
     };
   }
 
@@ -37,6 +53,10 @@ class RecordModel {
           (x) => GenericItemModel.fromMap(x as Map<String, dynamic>),
         ),
       ),
+      map['id'] != null ? map['id'] as String : null,
+      map['options'] != null
+          ? RecordOptions.fromMap(map['options'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -46,16 +66,23 @@ class RecordModel {
       RecordModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'RecordModel(name: $name, itens: $itens)';
+  String toString() {
+    return 'RecordModel(id: $id, name: $name, itens: $itens, options: $options)';
+  }
 
   @override
   bool operator ==(covariant RecordModel other) {
     if (identical(this, other)) return true;
     final listEquals = const DeepCollectionEquality().equals;
 
-    return other.name == name && listEquals(other.itens, itens);
+    return other.id == id &&
+        other.name == name &&
+        listEquals(other.itens, itens) &&
+        other.options == options;
   }
 
   @override
-  int get hashCode => name.hashCode ^ itens.hashCode;
+  int get hashCode {
+    return id.hashCode ^ name.hashCode ^ itens.hashCode ^ options.hashCode;
+  }
 }

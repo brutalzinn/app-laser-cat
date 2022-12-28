@@ -1,1 +1,1 @@
-enum ItemRecordEnum { delay, coord }
+enum ItemRecordEnum { delay, coord, laser }

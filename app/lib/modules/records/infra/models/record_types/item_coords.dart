@@ -5,21 +5,21 @@ import 'package:flutter/material.dart';
 import 'record_abstract.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-class ItemCoord implements RecordAbstract {
+class ItemCoord extends RecordAbstract {
   int x;
   int y;
-  ItemCoord({
-    required this.x,
-    required this.y,
-  });
+  ItemCoord(
+    this.x,
+    this.y,
+  );
 
   ItemCoord copyWith({
     int? x,
     int? y,
   }) {
     return ItemCoord(
-      x: x ?? this.x,
-      y: y ?? this.y,
+      x ?? this.x,
+      y ?? this.y,
     );
   }
 
@@ -32,8 +32,8 @@ class ItemCoord implements RecordAbstract {
 
   factory ItemCoord.fromMap(Map<String, dynamic> map) {
     return ItemCoord(
-      x: map['x'] as int,
-      y: map['y'] as int,
+      map['x'] as int,
+      map['y'] as int,
     );
   }
 

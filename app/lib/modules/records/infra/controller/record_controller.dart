@@ -1,33 +1,33 @@
 import 'dart:convert';
 
 import 'package:app_laser_cat/app_config.dart';
-import 'package:app_laser_cat/modules/joystick/infra/models/record_model.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
+import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:get/get.dart';
 
 class RecordController extends GetxController {
-  Rx<List<RecordModel>> records = Rx<List<RecordModel>>([]);
+  RxList<RecordModel> records = RxList<RecordModel>([]);
 
-  Future<void> getRecordList() async {
-    records.value.clear();
-    print("record list");
+  void getRecordList() async {
+    records.clear();
     final fileStorage = FileProvider();
     final List<String> files =
         await fileStorage.listFilesByDir(AppConfig.recordsDir, true);
-    print("files found ${files}");
-    for (var filaName in files) {
-      final filePath = "${AppConfig.recordsDir}/${filaName}";
-      print("test file ${filePath}");
+    for (var fileName in files) {
+      final filePath = "${AppConfig.recordsDir}/$fileName";
       var recordJson = await fileStorage.read(filePath);
-      print(recordJson);
       final record = RecordModel.fromJson(recordJson);
-      // var reco
       print("file ${filePath} ${record}");
-      records.value.add(record);
+      records.add(record);
     }
   }
 
-  RecordModel _getRecordById(int index) {
-    return records.value[index];
+  RecordModel _getRecordById(String id) {
+    return records.firstWhere((element) => element.id == id);
+  }
+
+  void _openRecordView(String id) {
+    Get.toNamed(SharedRoutes.RecordViewRoute, arguments: {id: id});
   }
 }

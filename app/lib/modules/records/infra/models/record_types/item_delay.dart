@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'record_abstract.dart';
 
-class ItemDelay implements RecordAbstract {
+class ItemDelay extends RecordAbstract {
   int value;
   ItemDelay({
     required this.value,
@@ -53,4 +53,6 @@ class ItemDelay implements RecordAbstract {
   Widget build(BuildContext context) {
     return const Text("This is a example of item delay");
   }
+  
+
 }

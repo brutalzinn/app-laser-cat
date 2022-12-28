@@ -1,8 +1,7 @@
-import 'dart:convert';
-
-import 'package:app_laser_cat/app_config.dart';
-import 'package:app_laser_cat/modules/joystick/infra/models/coord_package.dart';
-import 'package:app_laser_cat/modules/joystick/infra/models/record_model.dart';
+import 'package:app_laser_cat/modules/records/infra/models/enums/item_record_enum.dart';
+import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_types/item_coords.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/textfield_dialog.dart';
@@ -18,7 +17,7 @@ class JoystickController extends GetxController {
   int _xCoords = 0;
   int _yCoords = 0;
 
-  final Rx<List<CoordPackage>> packages = Rx<List<CoordPackage>>([]);
+  List<GenericItemModel> packages = [];
   final Rx<String> lastResponse = Rx<String>("");
   Rx<bool> isRecording = Rx<bool>(false);
   SettingsPref settings = Get.find<SettingsPref>();
@@ -96,7 +95,8 @@ class JoystickController extends GetxController {
   void sendPackage(double dx, double dy) {
     _mapToServoRange(dx, dy);
     if (isRecording.value) {
-      packages.value.add(CoordPackage(_xCoords, _yCoords));
+      final itemCoord = ItemCoord(_xCoords, _yCoords);
+      packages.add(GenericItemModel(ItemRecordEnum.coord.index, itemCoord));
     }
     _sendPackage(_xCoords, _yCoords);
   }
@@ -125,7 +125,7 @@ class JoystickController extends GetxController {
             onSave: () async {
               final fileProvider = FileProvider();
               String name = recordName.text.toLowerCase();
-              final mapper = RecordModel(name: name, packages: packages.value);
+              final mapper = RecordModel(name, packages);
               fileProvider.write("records/${name}.json", mapper.toJson());
               print("saving as ${name}.json");
               Get.back();
@@ -139,7 +139,7 @@ class JoystickController extends GetxController {
 
   //start recording
   void _startRecording() {
-    packages.value.clear();
+    packages.clear();
     isRecording.value = true;
   }
 
@@ -154,8 +154,12 @@ class JoystickController extends GetxController {
 
   //play recording
   Future<void> playRecording() async {
-    for (var coords in packages.value) {
-      _sendPackage(coords.x, coords.y);
+    for (var coords in packages) {
+      if (coords.type == ItemRecordEnum.coord.index) {
+        final itemCoord = ItemCoord.fromMap(coords.object);
+        _sendPackage(itemCoord.x, itemCoord.y);
+      }
+
       await Future.delayed(Duration(seconds: settings.deliveryDelay.val));
     }
   }

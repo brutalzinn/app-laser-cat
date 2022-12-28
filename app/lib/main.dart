@@ -41,7 +41,7 @@ void main() async {
           page: () => SettingsView(),
           binding: SettingsBinding()),
       GetPage(
-          name: SharedRoutes.RecordRoute,
+          name: SharedRoutes.RecordListRoute,
           page: () => RecordListView(),
           binding: RecordBinding()),
     ],
