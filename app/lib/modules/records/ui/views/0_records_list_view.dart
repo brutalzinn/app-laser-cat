@@ -4,6 +4,7 @@ import 'package:app_laser_cat/modules/joystick/infra/controller/joystick_control
 import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
 import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
+import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/joystick_dialog.dart';
 import 'package:app_laser_cat/shared/ui/menu/custom_scaffold.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_floating_action_button.dart';
@@ -57,10 +58,25 @@ class RecordListView extends StatelessWidget {
                     leading: const Icon(Icons.list),
                     trailing: Row(
                         mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           CustomFloatingActionButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                print("testeee");
+                                Get.toNamed(SharedRoutes.RecordViewRoute,
+                                    arguments: [
+                                      {"id": item.id}
+                                    ]);
+                              },
+                              child: const Icon(Icons.settings)),
+                          CustomFloatingActionButton(
+                              onPressed: () {
+                                print("testeee");
+                                Get.toNamed(SharedRoutes.RecordViewRoute,
+                                    arguments: [
+                                      {"id": item.id}
+                                    ]);
+                              },
                               child: const Icon(Icons.play_arrow)),
                         ]),
                     title: Text(

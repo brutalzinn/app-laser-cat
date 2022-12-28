@@ -8,6 +8,17 @@ import 'package:get/get.dart';
 
 class RecordController extends GetxController {
   RxList<RecordModel> records = RxList<RecordModel>([]);
+  Rx<RecordModel> recordModel = Rx<RecordModel>(RecordModel("", []));
+  @override
+  void onInit() {
+    super.onInit();
+  }
+
+  void getById(String id) {
+      print("FINDDDD ID ${id}");
+      final record = _getRecordById(id);
+      recordModel.value = record;
+  }
 
   void getRecordList() async {
     records.clear();

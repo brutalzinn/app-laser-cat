@@ -3,7 +3,8 @@ import 'package:app_laser_cat/modules/home/ui/views/home_view.dart';
 import 'package:app_laser_cat/modules/joystick/infra/binding/joystick_binding.dart';
 import 'package:app_laser_cat/modules/joystick/ui/views/joystick_view.dart';
 import 'package:app_laser_cat/modules/records/infra/binding/record_binding.dart';
-import 'package:app_laser_cat/modules/records/ui/views/records_list_view.dart';
+import 'package:app_laser_cat/modules/records/ui/views/0_records_list_view.dart';
+import 'package:app_laser_cat/modules/records/ui/views/1_record_view.dart';
 import 'package:app_laser_cat/modules/settings/infra/binding/settings_binding.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/modules/settings/ui/views/settings_view.dart';
@@ -43,6 +44,10 @@ void main() async {
       GetPage(
           name: SharedRoutes.RecordListRoute,
           page: () => RecordListView(),
+          binding: RecordBinding()),
+      GetPage(
+          name: SharedRoutes.RecordViewRoute,
+          page: () => RecordView(),
           binding: RecordBinding()),
     ],
   ));
