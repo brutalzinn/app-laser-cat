@@ -2,6 +2,8 @@ import 'package:app_laser_cat/modules/records/infra/models/enums/item_record_enu
 import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
 import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
 import 'package:app_laser_cat/modules/records/infra/models/record_types/item_coords.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_types/item_delay.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_types/item_laser.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/textfield_dialog.dart';
@@ -22,6 +24,7 @@ class JoystickController extends GetxController {
   Rx<bool> isRecording = Rx<bool>(false);
   SettingsPref settings = Get.find<SettingsPref>();
   TextEditingController recordName = TextEditingController();
+  DateTime? lastSendPackage;
 
   ///init this instance
   @override
@@ -97,12 +100,23 @@ class JoystickController extends GetxController {
     if (isRecording.value) {
       final itemCoord = ItemCoord(_xCoords, _yCoords);
       packages.add(GenericItemModel(ItemRecordEnum.coord.index, itemCoord));
+      if (lastSendPackage != null) {
+        int delay =
+            lastSendPackage?.difference(DateTime.now()).inMilliseconds ?? 0;
+        final itemDelay = ItemDelay(delay);
+        packages.add(GenericItemModel(ItemRecordEnum.delay.index, itemDelay));
+      }
+      lastSendPackage = DateTime.now();
     }
     _sendPackage(_xCoords, _yCoords);
   }
 
   ///laser controllers
   void toggleLaser() {
+    if (isRecording.value) {
+      final itemLaser = ItemLaser(isLaserToggle ? 255 : 0);
+      packages.add(GenericItemModel(ItemRecordEnum.delay.index, itemLaser));
+    }
     _channel?.sink.add(isLaserToggle ? "LASER_ON" : "LASER_OFF");
     isLaserToggle = !isLaserToggle;
   }
