@@ -63,10 +63,8 @@ class RecordListView extends StatelessWidget {
                           CustomFloatingActionButton(
                               onPressed: () {
                                 print("testeee");
-                                Get.toNamed(SharedRoutes.RecordViewRoute,
-                                    arguments: [
-                                      {"id": item.id}
-                                    ]);
+                                recordController.setCurrentRecord(item);
+                                Get.toNamed(SharedRoutes.RecordViewRoute);
                               },
                               child: const Icon(Icons.settings)),
                           CustomFloatingActionButton(

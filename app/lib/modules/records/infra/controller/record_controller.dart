@@ -1,23 +1,26 @@
 import 'dart:convert';
 
 import 'package:app_laser_cat/app_config.dart';
+import 'package:app_laser_cat/modules/records/infra/models/enums/item_record_enum.dart';
+import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
 import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_types/item_coords.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_types/record_abstract.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class RecordController extends GetxController {
   RxList<RecordModel> records = RxList<RecordModel>([]);
-  Rx<RecordModel> recordModel = Rx<RecordModel>(RecordModel("", []));
+  Rx<RecordModel> currentRecord = Rx<RecordModel>(RecordModel("", []));
   @override
   void onInit() {
     super.onInit();
   }
 
-  void getById(String id) {
-      print("FINDDDD ID ${id}");
-      final record = _getRecordById(id);
-      recordModel.value = record;
+  void setCurrentRecord(RecordModel record) {
+    currentRecord.value = record;
   }
 
   void getRecordList() async {
@@ -31,6 +34,20 @@ class RecordController extends GetxController {
       final record = RecordModel.fromJson(recordJson);
       print("file ${filePath} ${record}");
       records.add(record);
+    }
+  }
+
+  Widget showItemWidget(GenericItemModel currentItem) {
+    final type = currentItem.type;
+    switch (type) {
+      case ItemRecordEnum.coord.index:
+        return ItemCoord.fromJson(currentItem.object).build();
+        break;
+      case ItemRecordEnum.delay.index:
+        break;
+
+      case ItemRecordEnum.laser.index:
+        break;
     }
   }
 

@@ -17,14 +17,12 @@ class RecordView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScaffold(
         title: "Record view",
-        onWidgetBuild: () =>
-            recordController.getById(Get.parameters['id'] ?? ""),
         children: [],
         // onWidgetBuild: ,
         child: Obx(() => ListView.builder(
-            itemCount: recordController.recordModel.value.itens.length,
+            itemCount: recordController.currentRecord.value.itens.length,
             itemBuilder: (BuildContext context, int index) {
-              final item = recordController.recordModel.value.itens[index];
+              final item = recordController.currentRecord.value.itens[index];
               return ListTile(
                   onTap: () {},
                   leading: const Icon(Icons.list),
@@ -33,8 +31,11 @@ class RecordView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CustomFloatingActionButton(
-                            onPressed: () {},
-                            child: const Icon(Icons.play_arrow)),
+                            tooltip: "Settings",
+                            onPressed: () {
+                              recordController.showItemWidget(item);
+                            },
+                            child: const Icon(Icons.settings)),
                       ]),
                   title: Text(
                     item.id ?? "",
