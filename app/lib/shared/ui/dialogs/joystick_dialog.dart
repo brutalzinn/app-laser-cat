@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 
 class JoystickDialog {
   final String title;
-  final TextEditingController controller;
   final JoystickController joystickController;
   final Function() onSave;
   final Function() onCancel;
@@ -16,7 +15,6 @@ class JoystickDialog {
   const JoystickDialog({
     Key? key,
     required this.title,
-    required this.controller,
     required this.joystickController,
     required this.onSave,
     required this.onCancel,

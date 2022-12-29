@@ -8,7 +8,7 @@ class GenericItemModel {
   int type;
   dynamic object;
   GenericItemModel(this.type, this.object, [this.id]) {
-    id = const Uuid().v4();
+    id ??= const Uuid().v4();
   }
 
   Map<String, dynamic> toMap() {

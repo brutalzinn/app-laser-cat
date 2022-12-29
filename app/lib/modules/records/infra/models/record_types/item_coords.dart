@@ -1,11 +1,17 @@
 import 'dart:convert';
 
+import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
+import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
+import 'package:app_laser_cat/shared/ui/dialogs/record_item_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'record_abstract.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ItemCoord extends RecordAbstract {
+  RecordController? recordController;
   int x;
   int y;
   ItemCoord(
@@ -55,8 +61,76 @@ class ItemCoord extends RecordAbstract {
   @override
   int get hashCode => x.hashCode ^ y.hashCode;
 
+  /// in this project, we dont need to do this.
+  /// we are working on this after one week justily to solve the indenpendency principle.
+  /// to do that, we need to handle this in controller. Like we do with joystick widget.
+  /// we will put thos dialog to controller again.
+  /// and we will only pass controller and return widget.
+  void showDialog(RecordController controller) {
+    final TextEditingController coordX =
+        TextEditingController(text: x.toString());
+    final TextEditingController coordY =
+        TextEditingController(text: y.toString());
+
+    recordController = controller;
+    RecordItemDialog(
+        child: _dialogModel(coordX, coordY),
+        title: "Record editor",
+        onSave: () {
+          // recordController!.currentRecordItem.value?.object = toJson();
+          x = int.parse(coordX.text);
+          y = int.parse(coordY.text);
+          print("SAVIIIING... ${coordX.text} ${coordY.text}");
+          onSave();
+          Get.back();
+        },
+        onCancel: () {
+          Get.back();
+        }).showDialog();
+  }
+
+  Widget _dialogModel(
+      TextEditingController coordX, TextEditingController coordY) {
+    return Column(
+      children: [
+        TextField(
+          controller: coordX,
+          keyboardType: TextInputType.text,
+          maxLines: 1,
+          decoration: const InputDecoration(
+              labelText: "x",
+              hintMaxLines: 1,
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.green, width: 4.0))),
+        ),
+        TextField(
+          keyboardType: TextInputType.text,
+          controller: coordY,
+          maxLines: 1,
+          decoration: const InputDecoration(
+              labelText: "y",
+              hintMaxLines: 1,
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.green, width: 4.0))),
+        ),
+      ],
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return const Text("This is a example of item coords");
+  void onSave() {
+    final fileProvider = FileProvider();
+    final recordItens = recordController?.currentRecord.value?.itens ?? [];
+    final currentRecord = recordController?.currentRecord.value!;
+    final currentRecordItem = recordController?.currentRecordItem.value;
+    if (currentRecordItem == null) {
+      print("current item doesnt exists");
+      return;
+    }
+    final currentRecordItemIndex = recordItens.indexOf(currentRecordItem);
+    recordItens[currentRecordItemIndex].object = toJson();
+    String name = currentRecord?.name ?? "undefined";
+    final mapper = RecordModel(name, recordItens);
+    fileProvider.write("records/${name}.json", mapper.toJson());
   }
 }

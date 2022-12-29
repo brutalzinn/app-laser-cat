@@ -21,6 +21,11 @@ class FileProvider {
     return file.writeAsString(data);
   }
 
+  Future<File> writeForce(String fileName, String data) async {
+    final file = await _localFile(fileName);
+    return file.writeAsString(data);
+  }
+
   Future<String> read(String fileName) async {
     final file = await _localFile(fileName);
     final contents = await file.readAsString();

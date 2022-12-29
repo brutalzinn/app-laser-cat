@@ -19,7 +19,7 @@ class RecordModel {
     this.id,
     this.options,
   ]) {
-    id = const Uuid().v4();
+    id ??= const Uuid().v4();
   }
 
   RecordModel copyWith({

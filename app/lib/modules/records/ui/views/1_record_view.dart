@@ -18,11 +18,10 @@ class RecordView extends StatelessWidget {
     return CustomScaffold(
         title: "Record view",
         children: [],
-        // onWidgetBuild: ,
         child: Obx(() => ListView.builder(
-            itemCount: recordController.currentRecord.value.itens.length,
+            itemCount: recordController.currentRecord.value!.itens.length,
             itemBuilder: (BuildContext context, int index) {
-              final item = recordController.currentRecord.value.itens[index];
+              final item = recordController.currentRecord.value!.itens[index];
               return ListTile(
                   onTap: () {},
                   leading: const Icon(Icons.list),
@@ -33,12 +32,13 @@ class RecordView extends StatelessWidget {
                         CustomFloatingActionButton(
                             tooltip: "Settings",
                             onPressed: () {
+                              recordController.setCurrentWidget(item);
                               recordController.showItemWidget(item);
                             },
                             child: const Icon(Icons.settings)),
                       ]),
                   title: Text(
-                    item.id ?? "",
+                    recordController.getItemRecordTitle(item),
                     style:
                         TextStyle(color: AppConfig.primaryColor, fontSize: 15),
                   ));

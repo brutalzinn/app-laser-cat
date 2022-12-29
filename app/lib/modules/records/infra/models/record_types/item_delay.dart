@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'record_abstract.dart';
@@ -50,9 +51,15 @@ class ItemDelay extends RecordAbstract {
   int get hashCode => value.hashCode;
 
   @override
-  Widget build(BuildContext context) {
-    return const Text("This is a example of item delay");
+  Widget showDialog(RecordController recordController) {
+    // TODO: implement showDialog
+    throw UnimplementedError();
   }
   
+  @override
+  void onSave() {
+    // TODO: implement onSave
+  }
 
+ 
 }

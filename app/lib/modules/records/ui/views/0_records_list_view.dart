@@ -28,7 +28,6 @@ class RecordListView extends StatelessWidget {
                   onPressed: () {
                     JoystickDialog(
                       title: "Joystick Dialog",
-                      controller: recordName,
                       joystickController: joystickController,
                       onSave: () {
                         final fileProvider = FileProvider();
