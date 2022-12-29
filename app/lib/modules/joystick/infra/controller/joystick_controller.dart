@@ -184,7 +184,7 @@ class JoystickController extends GetxController {
       }
       if (item.type == ItemRecordEnum.delay.index) {
         final itemDelay = ItemDelay.fromMap(item.object);
-        await Future.delayed(Duration(seconds: itemDelay.value));
+        await Future.delayed(Duration(milliseconds: itemDelay.value));
       }
       if (item.type == ItemRecordEnum.laser.index) {
         final itemLaser = ItemLaser.fromMap(item.object);
