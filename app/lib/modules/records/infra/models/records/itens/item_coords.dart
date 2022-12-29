@@ -7,7 +7,7 @@ import 'package:app_laser_cat/shared/ui/dialogs/record_item_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'record_abstract.dart';
+import '../record_abstract.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ItemCoord extends RecordAbstract {

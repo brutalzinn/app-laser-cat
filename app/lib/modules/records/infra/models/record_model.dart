@@ -5,27 +5,22 @@ import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
 import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
-import 'record_types/record_options.dart';
+import 'records/record_options.dart';
 
 class RecordModel {
   String? id;
   final String name;
-  final List<GenericItemModel> itens;
+  final List<ItemModel> itens;
   final RecordOptions? options;
 
-  RecordModel(
-    this.name,
-    this.itens, [
-    this.id,
-    this.options,
-  ]) {
+  RecordModel(this.name, this.itens, [this.id, this.options]) {
     id ??= const Uuid().v4();
   }
 
   RecordModel copyWith({
     String? id,
     String? name,
-    List<GenericItemModel>? itens,
+    List<ItemModel>? itens,
     RecordOptions? options,
   }) {
     return RecordModel(
@@ -48,9 +43,9 @@ class RecordModel {
   factory RecordModel.fromMap(Map<String, dynamic> map) {
     return RecordModel(
       map['name'] as String,
-      List<GenericItemModel>.from(
-        (map['itens'] as List).map<GenericItemModel>(
-          (x) => GenericItemModel.fromMap(x as Map<String, dynamic>),
+      List<ItemModel>.from(
+        (map['itens'] as List).map<ItemModel>(
+          (x) => ItemModel.fromMap(x as Map<String, dynamic>),
         ),
       ),
       map['id'] != null ? map['id'] as String : null,

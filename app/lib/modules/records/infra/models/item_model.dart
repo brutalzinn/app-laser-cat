@@ -3,11 +3,11 @@ import 'dart:convert';
 
 import 'package:uuid/uuid.dart';
 
-class GenericItemModel {
+class ItemModel {
   String? id;
   int type;
   dynamic object;
-  GenericItemModel(this.type, this.object, [this.id]) {
+  ItemModel(this.type, this.object, [this.id]) {
     id ??= const Uuid().v4();
   }
 
@@ -19,8 +19,8 @@ class GenericItemModel {
     };
   }
 
-  factory GenericItemModel.fromMap(Map<String, dynamic> map) {
-    return GenericItemModel(
+  factory ItemModel.fromMap(Map<String, dynamic> map) {
+    return ItemModel(
       map['type'] as int,
       map['object'] as dynamic,
       map['id'] != null ? map['id'] as String : null,
@@ -29,6 +29,6 @@ class GenericItemModel {
 
   String toJson() => json.encode(toMap());
 
-  factory GenericItemModel.fromJson(String source) =>
-      GenericItemModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ItemModel.fromJson(String source) =>
+      ItemModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

@@ -4,18 +4,18 @@ import 'dart:convert';
 import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
 import 'package:flutter/material.dart';
 
-import 'record_abstract.dart';
+import '../record_abstract.dart';
 
-class ItemLaser extends RecordAbstract {
+class ItemDelay extends RecordAbstract {
   int value;
-  ItemLaser(
+  ItemDelay(
     this.value,
   );
 
-  ItemLaser copyWith({
+  ItemDelay copyWith({
     int? value,
   }) {
-    return ItemLaser(
+    return ItemDelay(
       value ?? this.value,
     );
   }
@@ -26,22 +26,22 @@ class ItemLaser extends RecordAbstract {
     };
   }
 
-  factory ItemLaser.fromMap(Map<String, dynamic> map) {
-    return ItemLaser(
+  factory ItemDelay.fromMap(Map<String, dynamic> map) {
+    return ItemDelay(
       map['value'] as int,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ItemLaser.fromJson(String source) =>
-      ItemLaser.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ItemDelay.fromJson(String source) =>
+      ItemDelay.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'ItemLaser(value: $value)';
+  String toString() => 'ItemDelay(value: $value)';
 
   @override
-  bool operator ==(covariant ItemLaser other) {
+  bool operator ==(covariant ItemDelay other) {
     if (identical(this, other)) return true;
 
     return other.value == value;

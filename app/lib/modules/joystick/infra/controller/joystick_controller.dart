@@ -1,9 +1,11 @@
 import 'package:app_laser_cat/modules/records/infra/models/enums/item_record_enum.dart';
+import 'package:app_laser_cat/modules/records/infra/models/enums/record_types_enum.dart';
 import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
 import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
-import 'package:app_laser_cat/modules/records/infra/models/record_types/item_coords.dart';
-import 'package:app_laser_cat/modules/records/infra/models/record_types/item_delay.dart';
-import 'package:app_laser_cat/modules/records/infra/models/record_types/item_laser.dart';
+import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_coords.dart';
+import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_delay.dart';
+import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_laser.dart';
+import 'package:app_laser_cat/modules/records/infra/models/records/record_options.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/textfield_dialog.dart';
@@ -19,7 +21,7 @@ class JoystickController extends GetxController {
   int _xCoords = 0;
   int _yCoords = 0;
 
-  List<GenericItemModel> packages = [];
+  List<ItemModel> packages = [];
   final Rx<String> lastResponse = Rx<String>("");
   Rx<bool> isRecording = Rx<bool>(false);
   SettingsPref settings = Get.find<SettingsPref>();
@@ -67,6 +69,7 @@ class JoystickController extends GetxController {
   ///init connection with esp8266
   void initConnection() async {
     _lastResponse("trying to connect...");
+    clearFields();
     connectESP();
   }
 
@@ -99,12 +102,11 @@ class JoystickController extends GetxController {
     _mapToServoRange(dx, dy);
     if (isRecording.value) {
       final itemCoord = ItemCoord(_xCoords, _yCoords);
-      packages.add(GenericItemModel(ItemRecordEnum.coord.index, itemCoord));
+      packages.add(ItemModel(ItemRecordEnum.coord.index, itemCoord));
       if (lastSendPackage != null) {
-        int delay =
-            lastSendPackage?.difference(DateTime.now()).inMilliseconds ?? 0;
+        int delay = DateTime.now().difference(lastSendPackage!).inMilliseconds;
         final itemDelay = ItemDelay(delay);
-        packages.add(GenericItemModel(ItemRecordEnum.delay.index, itemDelay));
+        packages.add(ItemModel(ItemRecordEnum.delay.index, itemDelay));
       }
       lastSendPackage = DateTime.now();
     }
@@ -115,10 +117,14 @@ class JoystickController extends GetxController {
   void toggleLaser() {
     if (isRecording.value) {
       final itemLaser = ItemLaser(isLaserToggle ? 255 : 0);
-      packages.add(GenericItemModel(ItemRecordEnum.delay.index, itemLaser));
+      packages.add(ItemModel(ItemRecordEnum.laser.index, itemLaser));
     }
     _channel?.sink.add(isLaserToggle ? "LASER_ON" : "LASER_OFF");
     isLaserToggle = !isLaserToggle;
+  }
+
+  void _toggleLaser(int power) {
+    _channel?.sink.add("LASER_${power}");
   }
 
   //private generic send package to esp 8266
@@ -138,7 +144,9 @@ class JoystickController extends GetxController {
             title: "Save as",
             onSave: () async {
               final fileProvider = FileProvider();
-              String name = recordName.text.toLowerCase();
+              final name = recordName.text.toLowerCase();
+              final options =
+                  RecordOptions(recordType: RecordTypeEnum.none.index);
               final mapper = RecordModel(name, packages);
               fileProvider.write("records/${name}.json", mapper.toJson());
               print("saving as ${name}.json");
@@ -168,13 +176,25 @@ class JoystickController extends GetxController {
 
   //play recording
   Future<void> playRecording() async {
-    for (var coords in packages) {
-      if (coords.type == ItemRecordEnum.coord.index) {
-        final itemCoord = ItemCoord.fromMap(coords.object);
+    print("play reconrding");
+    for (var item in packages) {
+      if (item.type == ItemRecordEnum.coord.index) {
+        final itemCoord = ItemCoord.fromMap(item.object);
         _sendPackage(itemCoord.x, itemCoord.y);
       }
-
-      await Future.delayed(Duration(seconds: settings.deliveryDelay.val));
+      if (item.type == ItemRecordEnum.delay.index) {
+        final itemDelay = ItemDelay.fromMap(item.object);
+        await Future.delayed(Duration(seconds: itemDelay.value));
+      }
+      if (item.type == ItemRecordEnum.laser.index) {
+        final itemLaser = ItemLaser.fromMap(item.object);
+        _toggleLaser(itemLaser.value);
+      }
     }
+  }
+
+  void clearFields() {
+    isRecording.value = false;
+    lastSendPackage = null;
   }
 }
