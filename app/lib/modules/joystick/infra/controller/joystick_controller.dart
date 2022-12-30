@@ -8,69 +8,44 @@ import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_la
 import 'package:app_laser_cat/modules/records/infra/models/records/record_options.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
+import 'package:app_laser_cat/shared/infra/services/connector_service.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/textfield_dialog.dart';
 import 'package:app_laser_cat/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 ///this controller is just for joystick widget.
 ///why we have web socket channel here? This cant be a dependency. Sometimes we need just connect to esp 8266 and close connection.
 class JoystickController extends GetxController {
-  WebSocketChannel? _channel;
   bool isLaserToggle = false;
-  bool isReconnect = false;
   int _xCoords = 0;
   int _yCoords = 0;
-
   List<ItemModel> packages = [];
-  final Rx<String> lastResponse = Rx<String>("");
   Rx<bool> isRecording = Rx<bool>(false);
   SettingsPref settings = Get.find<SettingsPref>();
+  ConnectorService connectorService = Get.find<ConnectorService>();
+
   TextEditingController recordName = TextEditingController();
   DateTime? lastSendPackage;
+  final Rx<String> lastResponse = Rx<String>("");
 
   ///init this instance
+
+  void refreshStatus() {
+    lastResponse(connectorService.statusMessage);
+  }
+
   @override
   void onInit() {
     initConnection();
   }
 
-  ///connect to esp 8266 and listen events. Call reconect if wrongs things happen.
-  void connectESP() {
-    _lastResponse("Connecting..");
-    _channel = WebSocketChannel.connect(
-        Uri.parse('ws://${settings.socketIp.val}:${settings.socketPort.val}'));
-    _channel!.stream.listen((streamData) {
-      lastResponse.value = streamData;
-      isReconnect = false;
-    }, onDone: () {
-      _lastResponse("Oh no. ESP 8266 not responds hand shake :(");
-      isReconnect = true;
-      reconnect();
-    }, onError: (e) {
-      _lastResponse("Oh no. ESP 8266 still not responds hand shake :(");
-      isReconnect = true;
-      reconnect();
-    }, cancelOnError: true);
-  }
-
-  ///auto reconnect
-  void reconnect() {
-    if (isReconnect == false) {
-      return;
-    }
-    Future.delayed(Duration(seconds: settings.timeout.val)).then((_) {
-      _lastResponse("trying to connect again... ");
-      connectESP();
-    });
-  }
-
   ///init connection with esp8266
   void initConnection() async {
-    _lastResponse("trying to connect...");
+    refreshStatus();
     clearFields();
-    connectESP();
+    connectorService.connectESP();
+    refreshStatus();
   }
 
   /// map cartesian plan xCoords and yCoords to servo range.
@@ -101,42 +76,30 @@ class JoystickController extends GetxController {
   ///bug here. The first item doesnt have  a delay captured.
   void sendPackage(double dx, double dy) {
     _mapToServoRange(dx, dy);
-    if (isRecording.value) {
-      final itemCoord = ItemCoord(_xCoords, _yCoords);
-      packages.add(ItemModel(ItemRecordEnum.coord.index, itemCoord));
-      if (lastSendPackage != null) {
-        int delay = DateTime.now().difference(lastSendPackage!).inMilliseconds;
-        final itemDelay = ItemDelay(delay);
-        packages.add(ItemModel(ItemRecordEnum.delay.index, itemDelay));
+    connectorService.sendPackage(_xCoords, _yCoords, () {
+      if (isRecording.value) {
+        final itemCoord = ItemCoord(_xCoords, _yCoords);
+        packages.add(ItemModel(ItemRecordEnum.coord.index, itemCoord));
+        if (lastSendPackage != null) {
+          int delay =
+              DateTime.now().difference(lastSendPackage!).inMilliseconds;
+          final itemDelay = ItemDelay(delay);
+          packages.add(ItemModel(ItemRecordEnum.delay.index, itemDelay));
+        }
+        lastSendPackage = DateTime.now();
       }
-      lastSendPackage = DateTime.now();
-    }
-    _sendPackage(_xCoords, _yCoords);
+    });
   }
 
   ///laser controllers
   void toggleLaser() {
-    if (isRecording.value) {
-      final itemLaser = ItemLaser(isLaserToggle ? 255 : 0);
-      packages.add(ItemModel(ItemRecordEnum.laser.index, itemLaser));
-    }
-    _toggleLaser(isLaserToggle ? 255 : 0);
-    // _channel?.sink.add(isLaserToggle ? "LASER_ON" : "LASER_OFF");
-    isLaserToggle = !isLaserToggle;
-  }
-
-  void _toggleLaser(int power) {
-    _channel?.sink.add("LASER_$power");
-  }
-
-  ///private generic send package to esp 8266
-  void _sendPackage(int x, int y) {
-    _channel?.sink.add('$x,$y');
-  }
-
-  /// to add last esp response.
-  void _lastResponse(String response) {
-    lastResponse.value = response;
+    connectorService.toggleLaser(isLaserToggle ? 255 : 0, () {
+      if (isRecording.value) {
+        final itemLaser = ItemLaser(isLaserToggle ? 255 : 0);
+        packages.add(ItemModel(ItemRecordEnum.laser.index, itemLaser));
+      }
+      isLaserToggle = !isLaserToggle;
+    });
   }
 
   //future methods to record and playback laser moviments
@@ -149,8 +112,8 @@ class JoystickController extends GetxController {
               final options =
                   RecordOptions(recordType: RecordTypeEnum.repeatOnPress.index);
               final mapper = RecordModel(name, packages, options);
-              fileProvider.write("records/${name}.json", mapper.toJson());
-              print("saving as ${name}.json");
+              fileProvider.write("records/$name.json", mapper.toJson());
+              print("saving as $name.json");
               Get.back();
             },
             onCancel: () => Get.back(),
@@ -173,38 +136,6 @@ class JoystickController extends GetxController {
       return;
     }
     _startRecording();
-  }
-
-  //play recording
-  ///we need to put this in record controller after.
-  Future<void> playRecording(List<ItemModel> records) async {
-    print("play reconrding");
-    for (var item in records) {
-      if (item.type == ItemRecordEnum.coord.index) {
-        final itemCoord = ItemCoord.fromJson(item.object);
-        _sendPackage(itemCoord.x, itemCoord.y);
-      }
-      if (item.type == ItemRecordEnum.delay.index) {
-        final itemDelay = ItemDelay.fromJson(item.object);
-        await Future.delayed(Duration(milliseconds: itemDelay.value));
-      }
-      if (item.type == ItemRecordEnum.laser.index) {
-        final itemLaser = ItemLaser.fromJson(item.object);
-        _toggleLaser(itemLaser.value);
-      }
-    }
-  }
-
-  //temporary method. needs be moved to record controller
-  void addRecord() {
-    final fileProvider = FileProvider();
-    String name = recordName.text.toLowerCase();
-    final options =
-        RecordOptions(recordType: RecordTypeEnum.repeatOnPress.index);
-    final mapper = RecordModel(name, packages, options);
-    fileProvider.write("records/${name}.json", mapper.toJson());
-    print("saving as ${name}.json");
-    Get.back();
   }
 
   void clearFields() {

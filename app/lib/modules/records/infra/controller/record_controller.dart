@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/records/infra/models/enums/item_record_enum.dart';
+import 'package:app_laser_cat/modules/records/infra/models/enums/record_types_enum.dart';
 import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
 import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
 import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_coords.dart';
@@ -10,14 +11,18 @@ import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_la
 import 'package:app_laser_cat/modules/records/infra/models/records/record_abstract.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
+import 'package:app_laser_cat/shared/infra/services/connector_service.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/record_item_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+
+import '../models/records/record_options.dart';
 
 class RecordController extends GetxController {
   RxList<RecordModel> records = RxList<RecordModel>([]);
   Rx<RecordModel?> currentRecord = Rx<RecordModel?>(null);
   Rx<ItemModel?> currentRecordItem = Rx<ItemModel?>(null);
+  ConnectorService connectorService = Get.find<ConnectorService>();
 
   @override
   void onInit() {
@@ -102,5 +107,37 @@ class RecordController extends GetxController {
 
   void _openRecordView(String id) {
     Get.toNamed(SharedRoutes.RecordViewRoute, arguments: {id: id});
+  }
+
+  //temporary method. needs be moved to record controller
+  void addRecord(String recordName) {
+    final fileProvider = FileProvider();
+    String name = recordName.toLowerCase();
+    final options =
+        RecordOptions(recordType: RecordTypeEnum.repeatOnPress.index);
+    final mapper = RecordModel(name, currentRecord.value?.itens ?? [], options);
+    fileProvider.write("records/$name.json", mapper.toJson());
+    print("saving as $name.json");
+    Get.back();
+  }
+
+  //play recording
+  ///we need to put this in record controller after.
+  Future<void> playRecording(List<ItemModel> records) async {
+    print("play reconrding");
+    for (var item in records) {
+      if (item.type == ItemRecordEnum.coord.index) {
+        final itemCoord = ItemCoord.fromJson(item.object);
+        connectorService.sendPackage(itemCoord.x, itemCoord.y);
+      }
+      if (item.type == ItemRecordEnum.delay.index) {
+        final itemDelay = ItemDelay.fromJson(item.object);
+        await Future.delayed(Duration(milliseconds: itemDelay.value));
+      }
+      if (item.type == ItemRecordEnum.laser.index) {
+        final itemLaser = ItemLaser.fromJson(item.object);
+        connectorService.toggleLaser(itemLaser.value);
+      }
+    }
   }
 }

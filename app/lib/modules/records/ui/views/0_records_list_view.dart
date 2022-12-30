@@ -31,7 +31,8 @@ class RecordListView extends StatelessWidget {
                       title: "Joystick Dialog",
                       joystickController: joystickController,
                       onSave: () {
-                        joystickController.addRecord();
+                        ///we can do better
+                        //   joystickController.addRecord();
                       },
                       onCancel: () => Get.back(),
                       label: "File name",
@@ -62,8 +63,6 @@ class RecordListView extends StatelessWidget {
                               child: const Icon(Icons.settings)),
                           CustomFloatingActionButton(
                               onPressed: () {
-                              
-                                joystickController.initConnection();
                                 final type = RecordTypeEnum
                                     .values[item.options.recordType];
 
@@ -77,7 +76,7 @@ class RecordListView extends StatelessWidget {
                                 //         .playRecording(item.itens);
                                 //     break;
                                 // }
-                                joystickController.playRecording(item.itens);
+                                recordController.playRecording(item.itens);
                               },
                               child: const Icon(Icons.play_arrow)),
                         ]),
