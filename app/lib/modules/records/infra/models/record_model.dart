@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
+import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,7 +14,7 @@ class RecordModel {
   final List<ItemModel> itens;
   final RecordOptions? options;
 
-  RecordModel(this.name, this.itens, [this.id, this.options]) {
+  RecordModel(this.name, this.itens, this.options, [this.id]) {
     id ??= const Uuid().v4();
   }
 
@@ -26,8 +27,8 @@ class RecordModel {
     return RecordModel(
       name ?? this.name,
       itens ?? this.itens,
-      id ?? this.id,
       options ?? this.options,
+      id ?? this.id,
     );
   }
 
@@ -42,17 +43,16 @@ class RecordModel {
 
   factory RecordModel.fromMap(Map<String, dynamic> map) {
     return RecordModel(
-      map['name'] as String,
-      List<ItemModel>.from(
-        (map['itens'] as List).map<ItemModel>(
-          (x) => ItemModel.fromMap(x as Map<String, dynamic>),
+        map['name'] as String,
+        List<ItemModel>.from(
+          (map['itens'] as List).map<ItemModel>(
+            (x) => ItemModel.fromMap(x as Map<String, dynamic>),
+          ),
         ),
-      ),
-      map['id'] != null ? map['id'] as String : null,
-      map['options'] != null
-          ? RecordOptions.fromMap(map['options'] as Map<String, dynamic>)
-          : null,
-    );
+        map['options'] != null
+            ? RecordOptions.fromMap(map['options'] as Map<String, dynamic>)
+            : null,
+        map['id'] != null ? map['id'] as String : null);
   }
 
   String toJson() => json.encode(toMap());
@@ -79,5 +79,10 @@ class RecordModel {
   @override
   int get hashCode {
     return id.hashCode ^ name.hashCode ^ itens.hashCode ^ options.hashCode;
+  }
+
+  void save() {
+    final fileProvider = FileProvider();
+    fileProvider.write("records/${name}.json", toJson());
   }
 }

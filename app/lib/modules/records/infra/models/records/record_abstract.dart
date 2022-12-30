@@ -4,5 +4,6 @@ import 'package:uuid/uuid.dart';
 
 abstract class RecordAbstract {
   void showDialog(RecordController recordController);
+  abstract RecordController? recordController;
   void onSave();
 }

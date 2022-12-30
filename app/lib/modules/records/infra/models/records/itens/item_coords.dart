@@ -11,6 +11,7 @@ import '../record_abstract.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ItemCoord extends RecordAbstract {
+  @override
   RecordController? recordController;
   int x;
   int y;
@@ -66,6 +67,7 @@ class ItemCoord extends RecordAbstract {
   /// to do that, we need to handle this in controller. Like we do with joystick widget.
   /// we will put thos dialog to controller again.
   /// and we will only pass controller and return widget.
+  @override
   void showDialog(RecordController controller) {
     final TextEditingController coordX =
         TextEditingController(text: x.toString());
@@ -74,13 +76,11 @@ class ItemCoord extends RecordAbstract {
 
     recordController = controller;
     RecordItemDialog(
-        child: _dialogModel(coordX, coordY),
+        child: _dialogWidget(coordX, coordY),
         title: "Record editor",
         onSave: () {
-          // recordController!.currentRecordItem.value?.object = toJson();
           x = int.parse(coordX.text);
           y = int.parse(coordY.text);
-          print("SAVIIIING... ${coordX.text} ${coordY.text}");
           onSave();
           Get.back();
         },
@@ -89,7 +89,7 @@ class ItemCoord extends RecordAbstract {
         }).showDialog();
   }
 
-  Widget _dialogModel(
+  Widget _dialogWidget(
       TextEditingController coordX, TextEditingController coordY) {
     return Column(
       children: [
@@ -121,16 +121,14 @@ class ItemCoord extends RecordAbstract {
   void onSave() {
     final fileProvider = FileProvider();
     final recordItens = recordController?.currentRecord.value?.itens ?? [];
-    final currentRecord = recordController?.currentRecord.value!;
+    final currentRecord = recordController?.currentRecord.value;
     final currentRecordItem = recordController?.currentRecordItem.value;
-    if (currentRecordItem == null) {
+    if (currentRecord == null || currentRecordItem == null) {
       print("current item doesnt exists");
       return;
     }
     final currentRecordItemIndex = recordItens.indexOf(currentRecordItem);
     recordItens[currentRecordItemIndex].object = toJson();
-    String name = currentRecord?.name ?? "undefined";
-    final mapper = RecordModel(name, recordItens);
-    fileProvider.write("records/${name}.json", mapper.toJson());
+    currentRecord.save();
   }
 }

@@ -51,8 +51,6 @@ class JoystickController extends GetxController {
       isReconnect = true;
       reconnect();
     }, cancelOnError: true);
-
-    //  _lastResponse("connected.");
   }
 
   ///auto reconnect
@@ -127,8 +125,7 @@ class JoystickController extends GetxController {
     _channel?.sink.add("LASER_${power}");
   }
 
-  //private generic send package to esp 8266
-
+  ///private generic send package to esp 8266
   void _sendPackage(int x, int y) {
     _channel?.sink.add('$x,$y');
   }
@@ -147,7 +144,7 @@ class JoystickController extends GetxController {
               final name = recordName.text.toLowerCase();
               final options =
                   RecordOptions(recordType: RecordTypeEnum.none.index);
-              final mapper = RecordModel(name, packages);
+              final mapper = RecordModel(name, packages, options);
               fileProvider.write("records/${name}.json", mapper.toJson());
               print("saving as ${name}.json");
               Get.back();
@@ -191,6 +188,17 @@ class JoystickController extends GetxController {
         _toggleLaser(itemLaser.value);
       }
     }
+  }
+
+  //temporary method. needs be moved to record controller
+  void addRecord() {
+    final fileProvider = FileProvider();
+    String name = recordName.text.toLowerCase();
+    final options = RecordOptions(recordType: RecordTypeEnum.none.index);
+    final mapper = RecordModel(name, packages, options);
+    fileProvider.write("records/${name}.json", mapper.toJson());
+    print("saving as ${name}.json");
+    Get.back();
   }
 
   void clearFields() {

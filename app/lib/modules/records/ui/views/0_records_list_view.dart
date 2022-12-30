@@ -30,14 +30,7 @@ class RecordListView extends StatelessWidget {
                       title: "Joystick Dialog",
                       joystickController: joystickController,
                       onSave: () {
-                        final fileProvider = FileProvider();
-                        String name = recordName.text.toLowerCase();
-                        final mapper =
-                            RecordModel(name, joystickController.packages);
-                        fileProvider.write(
-                            "records/${name}.json", mapper.toJson());
-                        print("saving as ${name}.json");
-                        Get.back();
+                        joystickController.addRecord();
                       },
                       onCancel: () => Get.back(),
                       label: "File name",
