@@ -40,7 +40,8 @@ class JoystickDialog {
                             label: joystickController.isRecording.value
                                 ? "Stop"
                                 : "Record"),
-                        Text(joystickController.lastResponse.value),
+                        Text(joystickController
+                            .connectorService.statusMessage.value),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

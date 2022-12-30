@@ -27,13 +27,8 @@ class JoystickController extends GetxController {
 
   TextEditingController recordName = TextEditingController();
   DateTime? lastSendPackage;
-  final Rx<String> lastResponse = Rx<String>("");
 
   ///init this instance
-
-  void refreshStatus() {
-    lastResponse(connectorService.statusMessage);
-  }
 
   @override
   void onInit() {
@@ -42,10 +37,8 @@ class JoystickController extends GetxController {
 
   ///init connection with esp8266
   void initConnection() async {
-    refreshStatus();
     clearFields();
     connectorService.connectESP();
-    refreshStatus();
   }
 
   /// map cartesian plan xCoords and yCoords to servo range.

@@ -39,7 +39,7 @@ class JoystickView extends StatelessWidget {
                         : "Record"),
 
                 //get responses from esp
-                Text(joystickController.lastResponse.value)
+                Text(joystickController.connectorService.statusMessage.value)
               ],
             ),
           ),

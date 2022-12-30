@@ -73,7 +73,7 @@ class HomeController extends GetxController {
                   },
               onError: (err) => {
                     webSocketChannel.sink.close(),
-                  }); // web
+                  }); 
         }
       },
     );

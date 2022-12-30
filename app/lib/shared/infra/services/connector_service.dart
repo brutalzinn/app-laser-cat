@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ConnectorService extends GetxService {
-  String statusMessage = "";
+  Rx<String> statusMessage = Rx<String>("");
   bool isReconnect = false;
   SettingsPref settings = Get.find<SettingsPref>();
   WebSocketChannel? _channel;
@@ -15,7 +15,7 @@ class ConnectorService extends GetxService {
     _channel = WebSocketChannel.connect(
         Uri.parse('ws://${settings.socketIp.val}:${settings.socketPort.val}'));
     _channel!.stream.listen((streamData) {
-      statusMessage = streamData;
+      _setStatus(streamData);
       isReconnect = false;
     }, onDone: () {
       _setStatus("Oh no. ESP 8266 not responds hand shake :(");
@@ -40,6 +40,7 @@ class ConnectorService extends GetxService {
   }
 
   void disconnect() {
+    _setStatus("Disconnected");
     _channel?.sink.close();
     isReconnect = false;
     Get.delete<GetxService>(force: true);
@@ -65,6 +66,6 @@ class ConnectorService extends GetxService {
   }
 
   void _setStatus(String response) {
-    statusMessage = response;
+    statusMessage.value = response;
   }
 }
