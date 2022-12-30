@@ -16,6 +16,7 @@ class CustomScaffold extends StatelessWidget {
   bool useNavigationMenu = false;
 
   CustomScaffold({
+    super.key,
     required this.child,
     required this.children,
     this.title,

@@ -4,8 +4,6 @@ import 'package:app_laser_cat/modules/records/infra/controller/record_controller
 import 'package:app_laser_cat/shared/ui/menu/custom_scaffold.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_floating_action_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 
 class RecordView extends StatelessWidget {

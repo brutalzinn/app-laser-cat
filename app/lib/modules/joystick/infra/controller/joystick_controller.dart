@@ -26,7 +26,6 @@ class JoystickController extends GetxController {
   SettingsPref settings = Get.find<SettingsPref>();
   ConnectorService connectorService = Get.find<ConnectorService>();
 
-  TextEditingController recordName = TextEditingController();
   DateTime? lastSendPackage;
 
   ///init this instance
@@ -70,49 +69,44 @@ class JoystickController extends GetxController {
   ///bug here. The first item doesnt have  a delay captured.
   void sendPackage(double dx, double dy) {
     _mapToServoRange(dx, dy);
-    connectorService.sendPackage(_xCoords, _yCoords, () {
-      if (isRecording.value) {
-        final itemCoord = ItemCoord(_xCoords, _yCoords);
-        packages.add(ItemModel(ItemRecordEnum.coord.index, itemCoord));
-        if (lastSendPackage != null) {
-          int delay =
-              DateTime.now().difference(lastSendPackage!).inMilliseconds;
-          final itemDelay = ItemDelay(delay);
-          packages.add(ItemModel(ItemRecordEnum.delay.index, itemDelay));
-        }
-        lastSendPackage = DateTime.now();
+    connectorService.sendPackage(_xCoords, _yCoords);
+    if (isRecording.value) {
+      final itemCoord = ItemCoord(_xCoords, _yCoords);
+      packages.add(ItemModel(ItemRecordEnum.coord.index, itemCoord));
+      if (lastSendPackage != null) {
+        int delay = DateTime.now().difference(lastSendPackage!).inMilliseconds;
+        final itemDelay = ItemDelay(delay);
+        packages.add(ItemModel(ItemRecordEnum.delay.index, itemDelay));
       }
-    });
+      lastSendPackage = DateTime.now();
+    }
   }
 
   ///laser controllers
   void toggleLaser() {
-    connectorService.toggleLaser(isLaserToggle ? 255 : 0, () {
-      if (isRecording.value) {
-        final itemLaser = ItemLaser(isLaserToggle ? 255 : 0);
-        packages.add(ItemModel(ItemRecordEnum.laser.index, itemLaser));
-      }
-      isLaserToggle = !isLaserToggle;
-    });
+    connectorService.toggleLaser(isLaserToggle ? 255 : 0);
+    if (isRecording.value) {
+      final itemLaser = ItemLaser(isLaserToggle ? 255 : 0);
+      packages.add(ItemModel(ItemRecordEnum.laser.index, itemLaser));
+    }
+    isLaserToggle = !isLaserToggle;
   }
 
   //future methods to record and playback laser moviments
   void _stopRecording() {
     RecordAddDialog(
-            title: "Save as",
-            onSave: (recordOptionsChanged) async {
-              final fileProvider = FileProvider();
-              final name = recordName.text.toLowerCase();
-              final options = recordOptionsChanged;
-              final mapper = RecordModel(name, packages, options);
-              fileProvider.write("records/$name.json", mapper.toJson());
-              print("saving as $name.json");
-              Get.back();
-            },
-            onCancel: () => Get.back(),
-            label: "File name",
-            controller: recordName)
-        .showDialog();
+      title: "Save as",
+      packages: packages,
+      onSave: (recordModel) async {
+        final fileProvider = FileProvider();
+        final name = recordModel.name;
+        fileProvider.write("records/$name.json", recordModel.toJson());
+        print("saving as $name.json");
+        Get.back();
+      },
+      onCancel: () => Get.back(),
+      label: "Record name",
+    ).showDialog();
     isRecording.value = false;
   }
 

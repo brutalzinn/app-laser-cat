@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/records/infra/models/enums/record_types_enum.dart';
+import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
 import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
 import 'package:app_laser_cat/modules/records/infra/models/records/record_options.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_elevated_button.dart';
@@ -8,88 +9,85 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RecordAddDialog {
-  Rx<RecordOptions> options = Rx<RecordOptions>(RecordOptions(recordType: 1));
+  ///wrong way to do this.. BUT I ONLY HAVE THREE HOURS TO DO THIS.
+
+  Rx<RecordModel?> recordModelChanged = Rx<RecordModel?>(null);
+  Rx<RecordTypeEnum> recordType =
+      Rx<RecordTypeEnum>(RecordTypeEnum.repeatOnPress);
   final String title;
-  RecordModel? record;
-  final TextEditingController controller;
-  final Function(RecordOptions value) onSave;
+  final RecordModel? recordModel;
+  final List<ItemModel>? packages;
+  final TextEditingController recordNameController = TextEditingController();
+  final Function(RecordModel value) onSave;
   final Function() onCancel;
 
   final String label;
   RecordAddDialog(
       {Key? key,
-      RecordOptions? options,
-      RecordModel? record,
+      this.recordModel,
+      this.packages,
       required this.title,
-      required this.controller,
       required this.onSave,
       required this.onCancel,
-      required this.label});
+      required this.label}) {
+    recordModelChanged.value = recordModel;
+  }
 
   void showDialog() {
     Get.defaultDialog(
-        title: title,
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          TextField(
-            controller: controller,
-            keyboardType: TextInputType.text,
-            maxLines: 1,
-            decoration: InputDecoration(
-                labelText: label,
-                hintMaxLines: 1,
-                border: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green, width: 4.0))),
-          ),
-          Text("Play option"),
+      title: title,
+      content: Obx(() => Column(children: [
+            TextField(
+              controller: recordNameController,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                  labelText: label,
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppConfig.primaryColor))),
+            ),
+            Text("Play option"),
 
-          ///TODO: create a widget to do this more readable after...
-          optionRadioButton(),
+            ///TODO: create a widget to do this more readable after...
+            ListTile(
+              title: Text(
+                'On press',
+              ),
+              leading: Radio(
+                value: RecordTypeEnum.repeatOnPress,
+                groupValue: recordType.value,
+                activeColor: AppConfig.primaryColor,
+                onChanged: (RecordTypeEnum? value) {
+                  recordType.value = value!;
+                },
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Repeat',
+              ),
+              leading: Radio(
+                value: RecordTypeEnum.repeat,
+                groupValue: recordType.value,
+                activeColor: AppConfig.primaryColor,
+                onChanged: (RecordTypeEnum? value) {
+                  recordType.value = value!;
+                },
+              ),
+            ),
 
-          const SizedBox(
-            height: 30.0,
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            CustomElevatedButton(
-                onPressed: onSave(options.value), label: "SAVE"),
-            CustomElevatedButton(onPressed: onCancel, label: "CANCEL")
-          ])
-        ]),
-        radius: 10.0);
-  }
-
-  Widget optionRadioButton() {
-    return Obx(
-      () => ListView(
-        shrinkWrap: true,
-        children: [
-          ListTile(
-            title: Text(
-              'On press',
-            ),
-            leading: Radio(
-              value: RecordTypeEnum.repeatOnPress.index,
-              groupValue: options.value.recordType,
-              activeColor: AppConfig.primaryColor,
-              onChanged: (int? value) {
-                options.value.recordType = value ?? 0;
-              },
-            ),
-          ),
-          ListTile(
-            title: Text(
-              'Repeat',
-            ),
-            leading: Radio(
-              value: RecordTypeEnum.repeat.index,
-              groupValue: options.value.recordType,
-              activeColor: AppConfig.primaryColor,
-              onChanged: (int? value) {
-                options.value.recordType = value ?? 0;
-              },
-            ),
-          ),
-        ],
-      ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              CustomElevatedButton(
+                  onPressed: () {
+                    final record = RecordModel(
+                        recordNameController.text,
+                        packages ?? [],
+                        RecordOptions(recordType: recordType.value.index));
+                    onSave(record);
+                  },
+                  label: "SAVE"),
+              CustomElevatedButton(onPressed: onCancel, label: "CANCEL")
+            ])
+          ])),
     );
   }
 }

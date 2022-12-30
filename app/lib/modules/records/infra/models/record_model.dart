@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:app_laser_cat/modules/records/infra/models/enums/record_types_enum.dart';
 import 'package:app_laser_cat/modules/records/infra/models/item_model.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:collection/collection.dart';
@@ -17,7 +18,6 @@ class RecordModel {
   RecordModel(this.name, this.itens, this.options, [this.id]) {
     id ??= const Uuid().v4();
   }
-
   RecordModel copyWith({
     String? id,
     String? name,
