@@ -1,10 +1,7 @@
-import 'dart:core';
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/joystick/infra/controller/joystick_controller.dart';
 import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
 import 'package:app_laser_cat/modules/records/infra/models/enums/record_types_enum.dart';
-import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
-import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/joystick_dialog.dart';
 import 'package:app_laser_cat/shared/ui/menu/custom_scaffold.dart';
@@ -31,6 +28,8 @@ class RecordListView extends StatelessWidget {
                       title: "Joystick Dialog",
                       joystickController: joystickController,
                       onSave: () {
+                        print("click on save");
+
                         ///we can do better
                         //   joystickController.addRecord();
                       },
@@ -66,17 +65,14 @@ class RecordListView extends StatelessWidget {
                                 final type = RecordTypeEnum
                                     .values[item.options.recordType];
 
-                                // switch (type) {
-                                //   case RecordTypeEnum.repeatOnPress:
-                                //     joystickController
-                                //         .playRecording(item.itens);
-                                //     break;
-                                //   case RecordTypeEnum.repeat:
-                                //     joystickController
-                                //         .playRecording(item.itens);
-                                //     break;
-                                // }
-                                recordController.playRecording(item.itens);
+                                switch (type) {
+                                  case RecordTypeEnum.repeatOnPress:
+                                    recordController.playRecording(item.itens);
+                                    break;
+                                  case RecordTypeEnum.repeat:
+                                    recordController.playRecording(item.itens);
+                                    break;
+                                }
                               },
                               child: const Icon(Icons.play_arrow)),
                         ]),

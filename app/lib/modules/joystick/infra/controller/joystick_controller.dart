@@ -6,6 +6,7 @@ import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_co
 import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_delay.dart';
 import 'package:app_laser_cat/modules/records/infra/models/records/itens/item_laser.dart';
 import 'package:app_laser_cat/modules/records/infra/models/records/record_options.dart';
+import 'package:app_laser_cat/modules/records/ui/dialogs/record_add_dialog.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/provider/settings_provider.dart';
 import 'package:app_laser_cat/shared/infra/services/connector_service.dart';
@@ -97,13 +98,12 @@ class JoystickController extends GetxController {
 
   //future methods to record and playback laser moviments
   void _stopRecording() {
-    TextFieldDialog(
+    RecordAddDialog(
             title: "Save as",
-            onSave: () async {
+            onSave: (recordType) async {
               final fileProvider = FileProvider();
               final name = recordName.text.toLowerCase();
-              final options =
-                  RecordOptions(recordType: RecordTypeEnum.repeatOnPress.index);
+              final options = RecordOptions(recordType: recordType);
               final mapper = RecordModel(name, packages, options);
               fileProvider.write("records/$name.json", mapper.toJson());
               print("saving as $name.json");

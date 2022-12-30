@@ -14,6 +14,7 @@ import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/shared/infra/services/connector_service.dart';
 import 'package:app_laser_cat/shared/ui/dialogs/record_item_dialog.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../models/records/record_options.dart';
@@ -23,6 +24,7 @@ class RecordController extends GetxController {
   Rx<RecordModel?> currentRecord = Rx<RecordModel?>(null);
   Rx<ItemModel?> currentRecordItem = Rx<ItemModel?>(null);
   ConnectorService connectorService = Get.find<ConnectorService>();
+  static final fileStorage = FileProvider();
 
   @override
   void onInit() {
@@ -35,18 +37,28 @@ class RecordController extends GetxController {
 
   void getRecordList() async {
     records.clear();
-    final fileStorage = FileProvider();
-    final List<String> files =
-        await fileStorage.listFilesByDir(AppConfig.recordsDir, true);
-    if (files.isEmpty) {
+    final List<String> fileNames = await _getRecordFiles();
+    if (fileNames.isEmpty) {
       return;
     }
+    records.value = await _getRecordList(fileNames);
+  }
+
+  Future<List<RecordModel>> _getRecordList(List<String> files) async {
+    List<RecordModel> result = [];
     for (var fileName in files) {
       final filePath = "${AppConfig.recordsDir}/$fileName";
       var recordJson = await fileStorage.read(filePath);
       final record = RecordModel.fromJson(recordJson);
-      records.add(record);
+      result.add(record);
     }
+    return result;
+  }
+
+  Future<List<String>> _getRecordFiles() async {
+    final List<String> files =
+        await fileStorage.listFilesByDir(AppConfig.recordsDir, true);
+    return files;
   }
 
   void setCurrentWidget(ItemModel currentItem) {
@@ -109,7 +121,6 @@ class RecordController extends GetxController {
     Get.toNamed(SharedRoutes.RecordViewRoute, arguments: {id: id});
   }
 
-  //temporary method. needs be moved to record controller
   void addRecord(String recordName) {
     final fileProvider = FileProvider();
     String name = recordName.toLowerCase();

@@ -57,12 +57,16 @@ class ConnectorService extends GetxService {
 
   void sendPackage(int dxMapped, int dyMapped, [VoidCallback? afterAction]) {
     _sendPackage(dxMapped, dyMapped);
-    afterAction!();
+    if (afterAction != null) {
+      afterAction();
+    }
   }
 
   void toggleLaser(int power, [VoidCallback? afterAction]) {
     _toggleLaser(power);
-    afterAction!();
+    if (afterAction != null) {
+      afterAction();
+    }
   }
 
   void _setStatus(String response) {
