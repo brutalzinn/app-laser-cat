@@ -12,7 +12,7 @@ class RecordModel {
   String? id;
   final String name;
   final List<ItemModel> itens;
-  final RecordOptions? options;
+  final RecordOptions options;
 
   RecordModel(this.name, this.itens, this.options, [this.id]) {
     id ??= const Uuid().v4();
@@ -37,7 +37,7 @@ class RecordModel {
       'id': id,
       'name': name,
       'itens': itens.map((x) => x.toMap()).toList(),
-      'options': options?.toMap(),
+      'options': options.toMap(),
     };
   }
 
@@ -49,9 +49,7 @@ class RecordModel {
             (x) => ItemModel.fromMap(x as Map<String, dynamic>),
           ),
         ),
-        map['options'] != null
-            ? RecordOptions.fromMap(map['options'] as Map<String, dynamic>)
-            : null,
+        RecordOptions.fromMap(map['options'] as Map<String, dynamic>),
         map['id'] != null ? map['id'] as String : null);
   }
 

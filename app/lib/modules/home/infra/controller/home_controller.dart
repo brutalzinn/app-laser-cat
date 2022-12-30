@@ -62,7 +62,7 @@ class HomeController extends GetxController {
           String ip = '$subnet.$i';
           String url = 'ws://$ip:$port';
           var webSocketChannel = WebSocketChannel.connect(Uri.parse(url));
-          webSocketChannel.sink.add("hand");
+          webSocketChannel.sink.add("HAND");
           webSocketChannel.stream.listen((dynamic dataFromServer) {
             callBack(ip);
             webSocketChannel.sink.close();

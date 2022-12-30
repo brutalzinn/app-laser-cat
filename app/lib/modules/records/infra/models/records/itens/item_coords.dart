@@ -119,7 +119,6 @@ class ItemCoord extends RecordAbstract {
 
   @override
   void onSave() {
-    final fileProvider = FileProvider();
     final recordItens = recordController?.currentRecord.value?.itens ?? [];
     final currentRecord = recordController?.currentRecord.value;
     final currentRecordItem = recordController?.currentRecordItem.value;

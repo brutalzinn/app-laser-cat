@@ -19,22 +19,23 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
 
   switch (type) {
     case WStype_DISCONNECTED:
+          analogWrite(LASER_PIN, 0);
+          analogWrite(LED_BUILTIN, 0);
       break;
 
     case WStype_CONNECTED:
       { IPAddress ip = webSocket.remoteIP(num);
       Serial.print("Connected:");
       Serial.println(ip);
-      digitalWrite(LASER_PIN, LOW);
-      webSocket.sendTXT(0, "LASER_OFF");
+      analogWrite(LASER_PIN, 0);
+      webSocket.sendTXT(0, "LASER_0");
       }
       break;
 
     case WStype_TEXT:
       { 
-        String text = String((char *) &payload[0]);
+        String text = String((char *) payload);
         messangeHandler(text);
-        webSocket.sendTXT(0, "OK");
       }
       break;
   }
@@ -47,23 +48,13 @@ void messangeHandler(String text){
 }
 
 void laserHandle(String text){
-  int index = text.lastIndexOf("LASER_");
-  Serial.println("OK");
-  Serial.println("TEXT:" + text);
-  Serial.println("LENGHT:" + text.length());
+  int index = text.indexOf("LASER_");
   if(index == -1){
     return;
   }
- 
-  String val = text.substring(5, text.length());
-  Serial.print("VAL" + val);
-  int power = val.toInt();     
-
-  Serial.println("--START POWER--");
-  Serial.println(power);
-  Serial.println("--END POWER--");
-  analogWrite(LASER_PIN, power);
-  webSocket.sendTXT(0, "LASER_POWER" + power);
+  int val = text.substring(6, text.length()).toInt();
+  analogWrite(LASER_PIN, val);
+  webSocket.sendTXT(0, text);
 }
 
 void handShakeHandle(String text){
@@ -71,7 +62,7 @@ void handShakeHandle(String text){
        return;
     }
     Serial.println("SENDING SHAKE TO DEVICE");
-    webSocket.sendTXT(0, "shake");
+    webSocket.sendTXT(0, "SHAKE");
 }
 
 void servoHandle(String text){
@@ -81,17 +72,10 @@ void servoHandle(String text){
   }
   String val_x = text.substring(0, index);
   String val_y = text.substring(index + 1,text.length());
-  
-  Serial.print("MOVING_SERVO:");
-  Serial.println(val_x);
-  Serial.println(val_y);
-  
   int pos1 = val_x.toInt();     
   int pos2 = val_y.toInt();
- 
   BASE_SERVO.write(pos1);
   VERTICAL_SERVO.write(pos2); 
-  
   webSocket.sendTXT(0, "MOVING_SERVO");
 }
 
@@ -104,7 +88,7 @@ void setup() {
 
   BASE_SERVO.attach(BASE_SERVO_PIN);
   VERTICAL_SERVO.attach(VERTICAL_SERVO_PIN);
-  digitalWrite(LED_BUILTIN, OFF);
+  analogWrite(LED_BUILTIN, 0);
   WiFi.begin(SSID, PASSWD);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(". ");
@@ -115,8 +99,6 @@ void setup() {
  
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
-  
-
 }
 
 void loop() {

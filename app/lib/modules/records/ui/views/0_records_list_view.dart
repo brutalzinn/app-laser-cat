@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/joystick/infra/controller/joystick_controller.dart';
 import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
+import 'package:app_laser_cat/modules/records/infra/models/enums/record_types_enum.dart';
 import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
@@ -61,11 +62,22 @@ class RecordListView extends StatelessWidget {
                               child: const Icon(Icons.settings)),
                           CustomFloatingActionButton(
                               onPressed: () {
-                                print("testeee");
-                                Get.toNamed(SharedRoutes.RecordViewRoute,
-                                    arguments: [
-                                      {"id": item.id}
-                                    ]);
+                              
+                                joystickController.initConnection();
+                                final type = RecordTypeEnum
+                                    .values[item.options.recordType];
+
+                                // switch (type) {
+                                //   case RecordTypeEnum.repeatOnPress:
+                                //     joystickController
+                                //         .playRecording(item.itens);
+                                //     break;
+                                //   case RecordTypeEnum.repeat:
+                                //     joystickController
+                                //         .playRecording(item.itens);
+                                //     break;
+                                // }
+                                joystickController.playRecording(item.itens);
                               },
                               child: const Icon(Icons.play_arrow)),
                         ]),

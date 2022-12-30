@@ -81,7 +81,7 @@ class ItemDelay extends RecordAbstract {
       keyboardType: TextInputType.text,
       maxLines: 1,
       decoration: const InputDecoration(
-          labelText: "x",
+          labelText: "Delay",
           hintMaxLines: 1,
           border: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.green, width: 4.0))),
@@ -90,7 +90,6 @@ class ItemDelay extends RecordAbstract {
 
   @override
   void onSave() {
-    final fileProvider = FileProvider();
     final recordItens = recordController?.currentRecord.value?.itens ?? [];
     final currentRecord = recordController?.currentRecord.value;
     final currentRecordItem = recordController?.currentRecordItem.value;

@@ -14,6 +14,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+///this controller is just for joystick widget.
+///why we have web socket channel here? This cant be a dependency. Sometimes we need just connect to esp 8266 and close connection.
 class JoystickController extends GetxController {
   WebSocketChannel? _channel;
   bool isLaserToggle = false;
@@ -96,6 +98,7 @@ class JoystickController extends GetxController {
   }
 
   ///send earch angule that record captures to esp8266
+  ///bug here. The first item doesnt have  a delay captured.
   void sendPackage(double dx, double dy) {
     _mapToServoRange(dx, dy);
     if (isRecording.value) {
@@ -117,12 +120,13 @@ class JoystickController extends GetxController {
       final itemLaser = ItemLaser(isLaserToggle ? 255 : 0);
       packages.add(ItemModel(ItemRecordEnum.laser.index, itemLaser));
     }
-    _channel?.sink.add(isLaserToggle ? "LASER_ON" : "LASER_OFF");
+    _toggleLaser(isLaserToggle ? 255 : 0);
+    // _channel?.sink.add(isLaserToggle ? "LASER_ON" : "LASER_OFF");
     isLaserToggle = !isLaserToggle;
   }
 
   void _toggleLaser(int power) {
-    _channel?.sink.add("LASER_${power}");
+    _channel?.sink.add("LASER_$power");
   }
 
   ///private generic send package to esp 8266
@@ -143,7 +147,7 @@ class JoystickController extends GetxController {
               final fileProvider = FileProvider();
               final name = recordName.text.toLowerCase();
               final options =
-                  RecordOptions(recordType: RecordTypeEnum.none.index);
+                  RecordOptions(recordType: RecordTypeEnum.repeatOnPress.index);
               final mapper = RecordModel(name, packages, options);
               fileProvider.write("records/${name}.json", mapper.toJson());
               print("saving as ${name}.json");
@@ -172,19 +176,20 @@ class JoystickController extends GetxController {
   }
 
   //play recording
-  Future<void> playRecording() async {
+  ///we need to put this in record controller after.
+  Future<void> playRecording(List<ItemModel> records) async {
     print("play reconrding");
-    for (var item in packages) {
+    for (var item in records) {
       if (item.type == ItemRecordEnum.coord.index) {
-        final itemCoord = ItemCoord.fromMap(item.object);
+        final itemCoord = ItemCoord.fromJson(item.object);
         _sendPackage(itemCoord.x, itemCoord.y);
       }
       if (item.type == ItemRecordEnum.delay.index) {
-        final itemDelay = ItemDelay.fromMap(item.object);
+        final itemDelay = ItemDelay.fromJson(item.object);
         await Future.delayed(Duration(milliseconds: itemDelay.value));
       }
       if (item.type == ItemRecordEnum.laser.index) {
-        final itemLaser = ItemLaser.fromMap(item.object);
+        final itemLaser = ItemLaser.fromJson(item.object);
         _toggleLaser(itemLaser.value);
       }
     }
@@ -194,7 +199,8 @@ class JoystickController extends GetxController {
   void addRecord() {
     final fileProvider = FileProvider();
     String name = recordName.text.toLowerCase();
-    final options = RecordOptions(recordType: RecordTypeEnum.none.index);
+    final options =
+        RecordOptions(recordType: RecordTypeEnum.repeatOnPress.index);
     final mapper = RecordModel(name, packages, options);
     fileProvider.write("records/${name}.json", mapper.toJson());
     print("saving as ${name}.json");
