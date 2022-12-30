@@ -100,10 +100,10 @@ class JoystickController extends GetxController {
   void _stopRecording() {
     RecordAddDialog(
             title: "Save as",
-            onSave: (recordType) async {
+            onSave: (recordOptionsChanged) async {
               final fileProvider = FileProvider();
               final name = recordName.text.toLowerCase();
-              final options = RecordOptions(recordType: recordType);
+              final options = recordOptionsChanged;
               final mapper = RecordModel(name, packages, options);
               fileProvider.write("records/$name.json", mapper.toJson());
               print("saving as $name.json");

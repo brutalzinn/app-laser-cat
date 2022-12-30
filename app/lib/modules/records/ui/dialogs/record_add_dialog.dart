@@ -1,26 +1,30 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/records/infra/models/enums/record_types_enum.dart';
+import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
+import 'package:app_laser_cat/modules/records/infra/models/records/record_options.dart';
 import 'package:app_laser_cat/shared/ui/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RecordAddDialog {
-  Rx<int> groupValue = Rx<int>(0);
+  Rx<RecordOptions> options = Rx<RecordOptions>(RecordOptions(recordType: 1));
   final String title;
+  RecordModel? record;
   final TextEditingController controller;
-  final Function(int value) onSave;
+  final Function(RecordOptions value) onSave;
   final Function() onCancel;
 
   final String label;
-  RecordAddDialog({
-    Key? key,
-    required this.title,
-    required this.controller,
-    required this.onSave,
-    required this.onCancel,
-    required this.label,
-  });
+  RecordAddDialog(
+      {Key? key,
+      RecordOptions? options,
+      RecordModel? record,
+      required this.title,
+      required this.controller,
+      required this.onSave,
+      required this.onCancel,
+      required this.label});
 
   void showDialog() {
     Get.defaultDialog(
@@ -46,7 +50,7 @@ class RecordAddDialog {
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             CustomElevatedButton(
-                onPressed: onSave(groupValue.value), label: "SAVE"),
+                onPressed: onSave(options.value), label: "SAVE"),
             CustomElevatedButton(onPressed: onCancel, label: "CANCEL")
           ])
         ]),
@@ -64,10 +68,10 @@ class RecordAddDialog {
             ),
             leading: Radio(
               value: RecordTypeEnum.repeatOnPress.index,
-              groupValue: groupValue.value,
+              groupValue: options.value.recordType,
               activeColor: AppConfig.primaryColor,
               onChanged: (int? value) {
-                groupValue.value = value ?? 0;
+                options.value.recordType = value ?? 0;
               },
             ),
           ),
@@ -77,10 +81,10 @@ class RecordAddDialog {
             ),
             leading: Radio(
               value: RecordTypeEnum.repeat.index,
-              groupValue: groupValue.value,
+              groupValue: options.value.recordType,
               activeColor: AppConfig.primaryColor,
               onChanged: (int? value) {
-                groupValue.value = value ?? 0;
+                options.value.recordType = value ?? 0;
               },
             ),
           ),

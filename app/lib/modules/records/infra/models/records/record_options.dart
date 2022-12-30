@@ -1,11 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:app_laser_cat/modules/records/infra/models/enums/record_types_enum.dart';
+
 class RecordOptions {
   int recordType;
   RecordOptions({
     required this.recordType,
   });
+
+  RecordTypeEnum get recordTypeEnum => RecordTypeEnum.values[recordType];
 
   RecordOptions copyWith({
     int? recordType,

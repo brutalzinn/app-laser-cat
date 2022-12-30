@@ -12,7 +12,6 @@ import 'package:app_laser_cat/modules/records/infra/models/records/record_abstra
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
 import 'package:app_laser_cat/shared/infra/routes/routes.dart';
 import 'package:app_laser_cat/shared/infra/services/connector_service.dart';
-import 'package:app_laser_cat/shared/ui/dialogs/record_item_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
