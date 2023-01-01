@@ -74,12 +74,6 @@ class JoystickController extends GetxController {
     if (isRecording.value) {
       final itemCoord = ItemCoord(_xCoords, _yCoords);
       tryAddToRecord(ItemModel(ItemRecordEnum.coord.index, itemCoord));
-      int delay =
-          (DateTime.now().difference(packageTimeTracker)).inMilliseconds;
-      print("DELAY ${delay}");
-      final itemDelay = ItemDelay(delay);
-      tryAddToRecord(ItemModel(ItemRecordEnum.delay.index, itemDelay));
-      packageTimeTracker = DateTime.now();
     }
   }
 
@@ -99,7 +93,12 @@ class JoystickController extends GetxController {
       isPause = true;
       return;
     }
+    int delay = (DateTime.now().difference(packageTimeTracker)).inMilliseconds;
+    print("DELAY ${delay}");
+    final itemDelay = ItemModel(ItemRecordEnum.delay.index, ItemDelay(delay));
     packages.add(itemRecord);
+    packageTimeTracker = DateTime.now();
+    packages.add(itemDelay);
   }
 
   //future methods to record and playback laser moviments
@@ -144,7 +143,5 @@ class JoystickController extends GetxController {
   void clearFields() {
     isRecording.value = false;
     isPause = false;
-    _xCoords = 0;
-    _yCoords = 0;
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_laser_cat/app_config.dart';
 import 'package:app_laser_cat/modules/joystick/infra/controller/joystick_controller.dart';
 import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
@@ -29,9 +31,6 @@ class RecordListView extends StatelessWidget {
                       joystickController: joystickController,
                       onSave: () {
                         print("click on save");
-
-                        ///we can do better
-                        //   joystickController.addRecord();
                       },
                       onCancel: () => Get.back(),
                       label: "File name",
@@ -39,6 +38,8 @@ class RecordListView extends StatelessWidget {
                   },
                   child: const Icon(Icons.add))),
         ],
+
+        ///we will separe this after
         title: "Angule Records",
         onWidgetBuild: recordController.getRecordList,
         child: Obx(
@@ -57,28 +58,15 @@ class RecordListView extends StatelessWidget {
                             children: [
                               CustomFloatingActionButton(
                                   onPressed: () {
-                                    print("testeee");
                                     recordController.setCurrentRecord(item);
                                     Get.toNamed(SharedRoutes.RecordViewRoute);
                                   },
                                   child: const Icon(Icons.settings)),
                               CustomFloatingActionButton(
-                                  onPressed: () {
-                                    final type = RecordTypeEnum
-                                        .values[item.options.recordType];
-
-                                    switch (type) {
-                                      case RecordTypeEnum.repeatOnPress:
-                                        recordController
-                                            .playRecording(item.itens);
-                                        break;
-                                      case RecordTypeEnum.repeat:
-                                        recordController
-                                            .playRecording(item.itens);
-                                        break;
-                                    }
+                                  onPressed: () async {
+                                    await recordController.playRecord(item);
                                   },
-                                  child: const Icon(Icons.play_arrow)),
+                                  child: const Icon(Icons.play_arrow))
                             ]),
                         title: Text(
                           item.name,

@@ -13,7 +13,7 @@ class RecordAddDialog {
 
   Rx<RecordModel?> recordModelChanged = Rx<RecordModel?>(null);
   Rx<RecordTypeEnum> recordType =
-      Rx<RecordTypeEnum>(RecordTypeEnum.repeatOnPress);
+      Rx<RecordTypeEnum>(RecordTypeEnum.playOnPress);
   final String title;
   final RecordModel? recordModel;
   final List<ItemModel>? packages;
@@ -54,7 +54,7 @@ class RecordAddDialog {
                   'On press',
                 ),
                 leading: Radio(
-                  value: RecordTypeEnum.repeatOnPress,
+                  value: RecordTypeEnum.playOnPress,
                   groupValue: recordType.value,
                   activeColor: AppConfig.primaryColor,
                   onChanged: (RecordTypeEnum? value) {

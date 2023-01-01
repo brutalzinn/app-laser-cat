@@ -1,1 +1,1 @@
-enum RecordTypeEnum { repeat, repeatOnPress, timeRepeat }
+enum RecordTypeEnum { repeat, playOnPress }

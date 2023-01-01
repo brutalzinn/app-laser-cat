@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:app_laser_cat/app_config.dart';
@@ -23,6 +24,8 @@ class RecordController extends GetxController {
   Rx<RecordModel?> currentRecord = Rx<RecordModel?>(null);
   List<RecordAbstract> recordItemsLoaded = [];
   RxBool isLoading = RxBool(false);
+  RxBool isPlay = RxBool(false);
+
   Rx<ItemModel?> currentRecordItem = Rx<ItemModel?>(null);
   ConnectorService connectorService = Get.find<ConnectorService>();
   static final fileStorage = FileProvider();
@@ -37,13 +40,14 @@ class RecordController extends GetxController {
   }
 
   void getRecordList() async {
+    isLoading.value = true;
     records.clear();
     final List<String> fileNames = await _getRecordFiles();
     if (fileNames.isEmpty) {
       return;
     }
     records.value = await _getRecordList(fileNames);
-    isLoading.value = true;
+    isLoading.value = false;
   }
 
   Future<List<RecordModel>> _getRecordList(List<String> files) async {
@@ -126,8 +130,7 @@ class RecordController extends GetxController {
   void addRecord(String recordName) {
     final fileProvider = FileProvider();
     String name = recordName.toLowerCase();
-    final options =
-        RecordOptions(recordType: RecordTypeEnum.repeatOnPress.index);
+    final options = RecordOptions(recordType: RecordTypeEnum.playOnPress.index);
     final mapper = RecordModel(name, currentRecord.value?.itens ?? [], options);
     fileProvider.write("records/$name.json", mapper.toJson());
     print("saving as $name.json");
@@ -136,6 +139,32 @@ class RecordController extends GetxController {
 
   void resetPosition() {
     connectorService.sendPackage(90, 90);
+  }
+
+  /// we will separe this after.
+  Future<void> playRecord(RecordModel record) async {
+    if (connectorService.isConnected == false) {
+      Get.defaultDialog(
+          title: "Disconnected",
+          content: const Text("Esp 8266 is offline."),
+          onConfirm: () => Get.back());
+      return;
+    }
+    final type = RecordTypeEnum.values[record.options.recordType];
+    switch (type) {
+      case RecordTypeEnum.playOnPress:
+        print("Play on press");
+        isPlay.value = true;
+        await playRecording(record.itens);
+        isPlay.value = false;
+        break;
+      case RecordTypeEnum.repeat:
+        print("Play on repeat");
+        isPlay.value = true;
+        while (isPlay.value) {
+          await playRecording(record.itens);
+        }
+    }
   }
 
   //play recording
@@ -147,7 +176,6 @@ class RecordController extends GetxController {
       print("execute item. ${item.title}");
       await item.execute(connectorService);
     }
-    resetPosition();
   }
 
   ///pre load item
