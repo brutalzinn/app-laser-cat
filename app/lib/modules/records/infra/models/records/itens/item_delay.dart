@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:app_laser_cat/modules/records/infra/controller/record_controller.dart';
 import 'package:app_laser_cat/modules/records/ui/dialogs/record_item_dialog.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
+import 'package:app_laser_cat/shared/infra/services/connector_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,9 @@ import '../record_abstract.dart';
 class ItemDelay extends RecordAbstract {
   @override
   RecordController? recordController;
+
+  @override
+  String title = "Delay";
 
   int value;
   ItemDelay(
@@ -100,5 +104,10 @@ class ItemDelay extends RecordAbstract {
     final currentRecordItemIndex = recordItens.indexOf(currentRecordItem);
     recordItens[currentRecordItemIndex].object = toJson();
     currentRecord.save();
+  }
+
+  @override
+  Future<void> execute(ConnectorService connectorService) async {
+    await Future.delayed(Duration(milliseconds: value));
   }
 }

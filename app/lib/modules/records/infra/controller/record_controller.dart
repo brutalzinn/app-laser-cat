@@ -21,6 +21,7 @@ import '../models/records/record_options.dart';
 class RecordController extends GetxController {
   RxList<RecordModel> records = RxList<RecordModel>([]);
   Rx<RecordModel?> currentRecord = Rx<RecordModel?>(null);
+  List<RecordAbstract> recordItemsLoaded = [];
   Rx<ItemModel?> currentRecordItem = Rx<ItemModel?>(null);
   ConnectorService connectorService = Get.find<ConnectorService>();
   static final fileStorage = FileProvider();
@@ -131,23 +132,40 @@ class RecordController extends GetxController {
     Get.back();
   }
 
+  void resetPosition() {
+    connectorService.sendPackage(90, 90);
+  }
+
   //play recording
-  ///we need to put this in record controller after.
   Future<void> playRecording(List<ItemModel> records) async {
-    print("play reconrding");
+    resetPosition();
+    print("play recordings");
+    List<RecordAbstract> recordsLoaded = _loadRecordItems(records);
+    for (var item in recordsLoaded) {
+      print("execute item. ${item.title}");
+      await item.execute(connectorService);
+    }
+    resetPosition();
+  }
+
+  ///pre load item
+  List<RecordAbstract> _loadRecordItems(List<ItemModel> records) {
+    print("load records itens");
+    List<RecordAbstract> itemsLoaded = [];
     for (var item in records) {
       if (item.type == ItemRecordEnum.coord.index) {
         final itemCoord = ItemCoord.fromJson(item.object);
-        connectorService.sendPackage(itemCoord.x, itemCoord.y);
+        itemsLoaded.add(itemCoord);
       }
       if (item.type == ItemRecordEnum.delay.index) {
         final itemDelay = ItemDelay.fromJson(item.object);
-        await Future.delayed(Duration(milliseconds: itemDelay.value));
+        itemsLoaded.add(itemDelay);
       }
       if (item.type == ItemRecordEnum.laser.index) {
         final itemLaser = ItemLaser.fromJson(item.object);
-        connectorService.toggleLaser(itemLaser.value);
+        itemsLoaded.add(itemLaser);
       }
     }
+    return itemsLoaded;
   }
 }

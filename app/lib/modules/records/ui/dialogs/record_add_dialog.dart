@@ -36,58 +36,60 @@ class RecordAddDialog {
   void showDialog() {
     Get.defaultDialog(
       title: title,
-      content: Obx(() => Column(children: [
-            TextField(
-              controller: recordNameController,
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                  labelText: label,
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppConfig.primaryColor))),
-            ),
-            Text("Play option"),
+      content: Obx(() => Expanded(
+            child: Column(children: [
+              TextField(
+                controller: recordNameController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                    labelText: label,
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppConfig.primaryColor))),
+              ),
+              Text("Play option"),
 
-            ///TODO: create a widget to do this more readable after...
-            ListTile(
-              title: Text(
-                'On press',
-              ),
-              leading: Radio(
-                value: RecordTypeEnum.repeatOnPress,
-                groupValue: recordType.value,
-                activeColor: AppConfig.primaryColor,
-                onChanged: (RecordTypeEnum? value) {
-                  recordType.value = value!;
-                },
-              ),
-            ),
-            ListTile(
-              title: Text(
-                'Repeat',
-              ),
-              leading: Radio(
-                value: RecordTypeEnum.repeat,
-                groupValue: recordType.value,
-                activeColor: AppConfig.primaryColor,
-                onChanged: (RecordTypeEnum? value) {
-                  recordType.value = value!;
-                },
-              ),
-            ),
-
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              CustomElevatedButton(
-                  onPressed: () {
-                    final record = RecordModel(
-                        recordNameController.text,
-                        packages ?? [],
-                        RecordOptions(recordType: recordType.value.index));
-                    onSave(record);
+              ///TODO: create a widget to do this more readable after...
+              ListTile(
+                title: Text(
+                  'On press',
+                ),
+                leading: Radio(
+                  value: RecordTypeEnum.repeatOnPress,
+                  groupValue: recordType.value,
+                  activeColor: AppConfig.primaryColor,
+                  onChanged: (RecordTypeEnum? value) {
+                    recordType.value = value!;
                   },
-                  label: "SAVE"),
-              CustomElevatedButton(onPressed: onCancel, label: "CANCEL")
-            ])
-          ])),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Repeat',
+                ),
+                leading: Radio(
+                  value: RecordTypeEnum.repeat,
+                  groupValue: recordType.value,
+                  activeColor: AppConfig.primaryColor,
+                  onChanged: (RecordTypeEnum? value) {
+                    recordType.value = value!;
+                  },
+                ),
+              ),
+
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                CustomElevatedButton(
+                    onPressed: () {
+                      final record = RecordModel(
+                          recordNameController.text,
+                          packages ?? [],
+                          RecordOptions(recordType: recordType.value.index));
+                      onSave(record);
+                    },
+                    label: "SAVE"),
+                CustomElevatedButton(onPressed: onCancel, label: "CANCEL")
+              ])
+            ]),
+          )),
     );
   }
 }

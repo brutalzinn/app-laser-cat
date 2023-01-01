@@ -23,6 +23,7 @@ class JoystickController extends GetxController {
   int _yCoords = 0;
   List<ItemModel> packages = [];
   Rx<bool> isRecording = Rx<bool>(false);
+  bool isPause = false;
   SettingsPref settings = Get.find<SettingsPref>();
   ConnectorService connectorService = Get.find<ConnectorService>();
 
@@ -72,11 +73,11 @@ class JoystickController extends GetxController {
     connectorService.sendPackage(_xCoords, _yCoords);
     if (isRecording.value) {
       final itemCoord = ItemCoord(_xCoords, _yCoords);
-      packages.add(ItemModel(ItemRecordEnum.coord.index, itemCoord));
+      tryAddToRecord(ItemModel(ItemRecordEnum.coord.index, itemCoord));
       if (lastSendPackage != null) {
         int delay = DateTime.now().difference(lastSendPackage!).inMilliseconds;
         final itemDelay = ItemDelay(delay);
-        packages.add(ItemModel(ItemRecordEnum.delay.index, itemDelay));
+        tryAddToRecord(ItemModel(ItemRecordEnum.delay.index, itemDelay));
       }
       lastSendPackage = DateTime.now();
     }
@@ -87,9 +88,18 @@ class JoystickController extends GetxController {
     connectorService.toggleLaser(isLaserToggle ? 255 : 0);
     if (isRecording.value) {
       final itemLaser = ItemLaser(isLaserToggle ? 255 : 0);
-      packages.add(ItemModel(ItemRecordEnum.laser.index, itemLaser));
+      tryAddToRecord(ItemModel(ItemRecordEnum.laser.index, itemLaser));
     }
     isLaserToggle = !isLaserToggle;
+  }
+
+  void tryAddToRecord(ItemModel itemRecord) {
+    if (connectorService.isConnected == false) {
+      connectorService.setMessage("Connection lost. The record is paused.");
+      isPause = true;
+      return;
+    }
+    packages.add(itemRecord);
   }
 
   //future methods to record and playback laser moviments
@@ -102,12 +112,17 @@ class JoystickController extends GetxController {
         final name = recordModel.name;
         fileProvider.write("records/$name.json", recordModel.toJson());
         print("saving as $name.json");
-        Get.back();
+        closeDialog();
       },
-      onCancel: () => Get.back(),
+      onCancel: closeDialog,
       label: "Record name",
     ).showDialog();
+  }
+
+  void closeDialog() {
     isRecording.value = false;
+    packages.clear();
+    Get.back();
   }
 
   //start recording
@@ -127,6 +142,7 @@ class JoystickController extends GetxController {
 
   void clearFields() {
     isRecording.value = false;
+    isPause = false;
     lastSendPackage = null;
   }
 }

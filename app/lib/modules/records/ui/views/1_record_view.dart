@@ -13,6 +13,7 @@ class RecordView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ///children of custom buttons needs will be optional param
     return CustomScaffold(
         title: "Record view",
         children: [],

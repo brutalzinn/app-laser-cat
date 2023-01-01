@@ -4,6 +4,7 @@ import 'package:app_laser_cat/modules/records/infra/controller/record_controller
 import 'package:app_laser_cat/modules/records/infra/models/record_model.dart';
 import 'package:app_laser_cat/modules/records/ui/dialogs/record_item_dialog.dart';
 import 'package:app_laser_cat/shared/infra/provider/file_provider.dart';
+import 'package:app_laser_cat/shared/infra/services/connector_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +12,9 @@ import '../record_abstract.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ItemCoord extends RecordAbstract {
+  @override
+  String title = "Coords";
+
   @override
   RecordController? recordController;
   int x;
@@ -129,5 +133,10 @@ class ItemCoord extends RecordAbstract {
     final currentRecordItemIndex = recordItens.indexOf(currentRecordItem);
     recordItens[currentRecordItemIndex].object = toJson();
     currentRecord.save();
+  }
+
+  @override
+  Future<void> execute(ConnectorService connectorService) async {
+    connectorService.sendPackage(x, y);
   }
 }
