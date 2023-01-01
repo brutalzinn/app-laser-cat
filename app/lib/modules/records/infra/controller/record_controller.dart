@@ -22,6 +22,7 @@ class RecordController extends GetxController {
   RxList<RecordModel> records = RxList<RecordModel>([]);
   Rx<RecordModel?> currentRecord = Rx<RecordModel?>(null);
   List<RecordAbstract> recordItemsLoaded = [];
+  RxBool isLoading = RxBool(false);
   Rx<ItemModel?> currentRecordItem = Rx<ItemModel?>(null);
   ConnectorService connectorService = Get.find<ConnectorService>();
   static final fileStorage = FileProvider();
@@ -42,6 +43,7 @@ class RecordController extends GetxController {
       return;
     }
     records.value = await _getRecordList(fileNames);
+    isLoading.value = true;
   }
 
   Future<List<RecordModel>> _getRecordList(List<String> files) async {

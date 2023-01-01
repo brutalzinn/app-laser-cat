@@ -18,7 +18,7 @@ import 'package:get/get.dart';
 ///this controller is just for joystick widget.
 ///why we have web socket channel here? This cant be a dependency. Sometimes we need just connect to esp 8266 and close connection.
 class JoystickController extends GetxController {
-  bool isLaserToggle = false;
+  bool isLaserToggle = true;
   int _xCoords = 0;
   int _yCoords = 0;
   List<ItemModel> packages = [];
@@ -26,8 +26,7 @@ class JoystickController extends GetxController {
   bool isPause = false;
   SettingsPref settings = Get.find<SettingsPref>();
   ConnectorService connectorService = Get.find<ConnectorService>();
-
-  DateTime? lastSendPackage;
+  DateTime packageTimeTracker = DateTime.now();
 
   ///init this instance
 
@@ -40,6 +39,7 @@ class JoystickController extends GetxController {
   void initConnection() async {
     clearFields();
     connectorService.connectESP();
+    // connectorService.sendPackage(90, 90);
   }
 
   /// map cartesian plan xCoords and yCoords to servo range.
@@ -74,12 +74,12 @@ class JoystickController extends GetxController {
     if (isRecording.value) {
       final itemCoord = ItemCoord(_xCoords, _yCoords);
       tryAddToRecord(ItemModel(ItemRecordEnum.coord.index, itemCoord));
-      if (lastSendPackage != null) {
-        int delay = DateTime.now().difference(lastSendPackage!).inMilliseconds;
-        final itemDelay = ItemDelay(delay);
-        tryAddToRecord(ItemModel(ItemRecordEnum.delay.index, itemDelay));
-      }
-      lastSendPackage = DateTime.now();
+      int delay =
+          (DateTime.now().difference(packageTimeTracker)).inMilliseconds;
+      print("DELAY ${delay}");
+      final itemDelay = ItemDelay(delay);
+      tryAddToRecord(ItemModel(ItemRecordEnum.delay.index, itemDelay));
+      packageTimeTracker = DateTime.now();
     }
   }
 
@@ -128,6 +128,7 @@ class JoystickController extends GetxController {
   //start recording
   void _startRecording() {
     packages.clear();
+    packageTimeTracker = DateTime.now();
     isRecording.value = true;
   }
 
@@ -143,6 +144,7 @@ class JoystickController extends GetxController {
   void clearFields() {
     isRecording.value = false;
     isPause = false;
-    lastSendPackage = null;
+    _xCoords = 0;
+    _yCoords = 0;
   }
 }

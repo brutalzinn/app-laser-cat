@@ -42,46 +42,50 @@ class RecordListView extends StatelessWidget {
         title: "Angule Records",
         onWidgetBuild: recordController.getRecordList,
         child: Obx(
-          () => ListView.builder(
-              itemCount: recordController.records.length,
-              itemBuilder: (BuildContext context, int index) {
-                final item = recordController.records[index];
-                return ListTile(
-                    onTap: () {},
-                    leading: const Icon(Icons.list),
-                    trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          CustomFloatingActionButton(
-                              onPressed: () {
-                                print("testeee");
-                                recordController.setCurrentRecord(item);
-                                Get.toNamed(SharedRoutes.RecordViewRoute);
-                              },
-                              child: const Icon(Icons.settings)),
-                          CustomFloatingActionButton(
-                              onPressed: () {
-                                final type = RecordTypeEnum
-                                    .values[item.options.recordType];
+          () => recordController.isLoading.value
+              ? const Text("Loading..")
+              : ListView.builder(
+                  itemCount: recordController.records.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = recordController.records[index];
+                    return ListTile(
+                        onTap: () {},
+                        leading: const Icon(Icons.list),
+                        trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              CustomFloatingActionButton(
+                                  onPressed: () {
+                                    print("testeee");
+                                    recordController.setCurrentRecord(item);
+                                    Get.toNamed(SharedRoutes.RecordViewRoute);
+                                  },
+                                  child: const Icon(Icons.settings)),
+                              CustomFloatingActionButton(
+                                  onPressed: () {
+                                    final type = RecordTypeEnum
+                                        .values[item.options.recordType];
 
-                                switch (type) {
-                                  case RecordTypeEnum.repeatOnPress:
-                                    recordController.playRecording(item.itens);
-                                    break;
-                                  case RecordTypeEnum.repeat:
-                                    recordController.playRecording(item.itens);
-                                    break;
-                                }
-                              },
-                              child: const Icon(Icons.play_arrow)),
-                        ]),
-                    title: Text(
-                      item.name,
-                      style: TextStyle(
-                          color: AppConfig.primaryColor, fontSize: 15),
-                    ));
-              }),
+                                    switch (type) {
+                                      case RecordTypeEnum.repeatOnPress:
+                                        recordController
+                                            .playRecording(item.itens);
+                                        break;
+                                      case RecordTypeEnum.repeat:
+                                        recordController
+                                            .playRecording(item.itens);
+                                        break;
+                                    }
+                                  },
+                                  child: const Icon(Icons.play_arrow)),
+                            ]),
+                        title: Text(
+                          item.name,
+                          style: TextStyle(
+                              color: AppConfig.primaryColor, fontSize: 15),
+                        ));
+                  }),
         ));
   }
 }

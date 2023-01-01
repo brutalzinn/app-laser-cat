@@ -31,7 +31,6 @@ class ConnectorService extends GetxService {
       isReconnect = true;
       reconnect();
     }, cancelOnError: true);
-    _channel?.sink.add("90,90");
   }
 
   ///auto reconnect
