@@ -116,7 +116,6 @@ void setup()
     delay(100);
   }
   Serial.println(WiFi.localIP());
-  digitalWrite(LED_BUILTIN, ON);
 
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);

@@ -19,8 +19,8 @@ import 'package:get/get.dart';
 ///why we have web socket channel here? This cant be a dependency. Sometimes we need just connect to esp 8266 and close connection.
 class JoystickController extends GetxController {
   bool isLaserToggle = true;
-  int _xCoords = 0;
-  int _yCoords = 0;
+  int _xCoords = 90;
+  int _yCoords = 90;
   List<ItemModel> packages = [];
   Rx<bool> isRecording = Rx<bool>(false);
   bool isPause = false;

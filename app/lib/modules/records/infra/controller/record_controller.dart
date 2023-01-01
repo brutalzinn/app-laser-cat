@@ -160,7 +160,7 @@ class RecordController extends GetxController {
         break;
       case RecordTypeEnum.repeat:
         print("Play on repeat");
-        isPlay.value = true;
+        isPlay.value = !isPlay.value;
         while (isPlay.value) {
           await playRecording(record.itens);
         }
