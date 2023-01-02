@@ -22,10 +22,12 @@ import '../models/records/record_options.dart';
 class RecordController extends GetxController {
   RxList<RecordModel> records = RxList<RecordModel>([]);
   Rx<RecordModel?> currentRecord = Rx<RecordModel?>(null);
+  Rx<RecordTypeEnum> currentRecordType =
+      Rx<RecordTypeEnum>(RecordTypeEnum.none);
   List<RecordAbstract> recordItemsLoaded = [];
   RxBool isLoading = RxBool(false);
   RxBool isPlay = RxBool(false);
-
+  bool isRunning = false;
   Rx<ItemModel?> currentRecordItem = Rx<ItemModel?>(null);
   ConnectorService connectorService = Get.find<ConnectorService>();
   static final fileStorage = FileProvider();
@@ -92,39 +94,17 @@ class RecordController extends GetxController {
   ///we can do better here after.
   String getItemRecordTitle(ItemModel currentItem) {
     ItemRecordEnum type = ItemRecordEnum.values[currentItem.type];
-    final title = _getItemRecordType(currentItem);
     switch (type) {
       case ItemRecordEnum.coord:
         final item = ItemCoord.fromJson(currentItem.object);
-        return "$title x: ${item.x} y: ${item.y}";
+        return "${item.title} x: ${item.x} y: ${item.y}";
       case ItemRecordEnum.delay:
         final item = ItemDelay.fromJson(currentItem.object);
-        return "$title delay: ${item.value} ms";
+        return "${item.title} delay: ${item.value} ms";
       case ItemRecordEnum.laser:
         final item = ItemLaser.fromJson(currentItem.object);
-        return "$title potency: ${item.value} PWD";
+        return "${item.title} potency: ${item.value} PWD";
     }
-  }
-
-  ///we need extend enum to do this. This is wrong.. but its 23:43
-  String _getItemRecordType(ItemModel currentItem) {
-    ItemRecordEnum type = ItemRecordEnum.values[currentItem.type];
-    switch (type) {
-      case ItemRecordEnum.coord:
-        return "Coord";
-      case ItemRecordEnum.delay:
-        return "Delay";
-      case ItemRecordEnum.laser:
-        return "Laser";
-    }
-  }
-
-  RecordModel _getRecordById(String id) {
-    return records.firstWhere((element) => element.id == id);
-  }
-
-  void _openRecordView(String id) {
-    Get.toNamed(SharedRoutes.RecordViewRoute, arguments: {id: id});
   }
 
   void addRecord(String recordName) {
@@ -138,32 +118,47 @@ class RecordController extends GetxController {
   }
 
   void resetPosition() {
+    connectorService.toggleLaser(0);
     connectorService.sendPackage(90, 90);
   }
 
+  bool get isConnected => connectorService.isConnected;
+
+  void showDisconnectionDialog() {
+    Get.defaultDialog(
+        title: "Disconnected",
+        content: const Text("Esp 8266 is offline."),
+        onConfirm: () => Get.back());
+  }
+
+  bool isShowDisconnectionDialog() {
+    if (isConnected == false) {
+      showDisconnectionDialog();
+      return true;
+    }
+    return false;
+  }
+
+  ///lets do go horse here. Because i already learned what i want learn with this project.
   /// we will separe this after.
   Future<void> playRecord(RecordModel record) async {
-    if (connectorService.isConnected == false) {
-      Get.defaultDialog(
-          title: "Disconnected",
-          content: const Text("Esp 8266 is offline."),
-          onConfirm: () => Get.back());
+    if (isShowDisconnectionDialog()) {
       return;
     }
-    final type = RecordTypeEnum.values[record.options.recordType];
-    switch (type) {
-      case RecordTypeEnum.playOnPress:
-        print("Play on press");
-        isPlay.value = true;
-        await playRecording(record.itens);
-        isPlay.value = false;
-        break;
-      case RecordTypeEnum.repeat:
-        print("Play on repeat");
-        isPlay.value = !isPlay.value;
-        while (isPlay.value) {
-          await playRecording(record.itens);
-        }
+    print("Play on press");
+    isRunning = !isRunning;
+    await playRecording(record.itens);
+  }
+
+  /// we will separe this after.
+  Future<void> playLongRecord(RecordModel record) async {
+    if (isShowDisconnectionDialog()) {
+      return;
+    }
+    print("Play on press");
+    isRunning = !isRunning;
+    while (isRunning) {
+      await playRecording(record.itens);
     }
   }
 
@@ -173,7 +168,11 @@ class RecordController extends GetxController {
     print("play recordings");
     List<RecordAbstract> recordsLoaded = _loadRecordItems(records);
     for (var item in recordsLoaded) {
-      print("execute item. ${item.title}");
+      if (isShowDisconnectionDialog() || isRunning == false) {
+        resetPosition();
+        print("force stop or disconnected.");
+        break;
+      }
       await item.execute(connectorService);
     }
   }

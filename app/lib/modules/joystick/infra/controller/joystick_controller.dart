@@ -39,7 +39,6 @@ class JoystickController extends GetxController {
   void initConnection() async {
     clearFields();
     connectorService.connectESP();
-    // connectorService.sendPackage(90, 90);
   }
 
   /// map cartesian plan xCoords and yCoords to servo range.

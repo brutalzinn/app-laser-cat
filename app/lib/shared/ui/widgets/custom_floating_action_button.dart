@@ -5,23 +5,29 @@ import 'package:flutter/material.dart';
 class CustomFloatingActionButton extends StatelessWidget {
   Icon child;
   final Function() onPressed;
+  Function()? onLongPressed;
+
   String? tooltip;
   String? heroTag;
   CustomFloatingActionButton({
     Key? key,
     required this.child,
     required this.onPressed,
+    this.onLongPressed,
     this.tooltip,
     this.heroTag,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-        tooltip: tooltip,
-        heroTag: heroTag,
-        backgroundColor: AppConfig.primaryColor,
-        onPressed: onPressed,
-        child: child);
+    return InkWell(
+      onLongPress: onLongPressed,
+      child: FloatingActionButton(
+          tooltip: tooltip,
+          heroTag: heroTag,
+          backgroundColor: AppConfig.primaryColor,
+          onPressed: onPressed,
+          child: child),
+    );
   }
 }

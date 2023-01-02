@@ -63,10 +63,16 @@ class RecordListView extends StatelessWidget {
                                   },
                                   child: const Icon(Icons.settings)),
                               CustomFloatingActionButton(
+                                  onLongPressed: () =>
+                                      recordController.playLongRecord(item),
+
+                                  /// this is wrong way to do this. The logic part needs be in controller. This a rule of this escturure pattern. But..
                                   onPressed: () async {
                                     await recordController.playRecord(item);
                                   },
-                                  child: const Icon(Icons.play_arrow))
+                                  child: recordController.isPlay.value
+                                      ? const Icon(Icons.stop)
+                                      : const Icon(Icons.play_arrow))
                             ]),
                         title: Text(
                           item.name,
