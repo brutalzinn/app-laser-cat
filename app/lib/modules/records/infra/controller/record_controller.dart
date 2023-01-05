@@ -32,11 +32,6 @@ class RecordController extends GetxController {
   ConnectorService connectorService = Get.find<ConnectorService>();
   static final fileStorage = FileProvider();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
   void setCurrentRecord(RecordModel record) {
     currentRecord.value = record;
   }
@@ -58,6 +53,11 @@ class RecordController extends GetxController {
       final filePath = "${AppConfig.recordsDir}/$fileName";
       var recordJson = await fileStorage.read(filePath);
       final record = RecordModel.fromJson(recordJson);
+      List<ItemModel> itens = record.itens;
+      for (var item in itens) {
+        item.loadItem();
+      }
+      record.itens.assignAll(itens);
       result.add(record);
     }
     return result;
@@ -140,7 +140,7 @@ class RecordController extends GetxController {
   }
 
   ///lets do go horse here. Because i already learned what i want learn with this project.
-  /// we will separe this after.
+  /// we will concat this after.
   Future<void> playRecord(RecordModel record) async {
     if (isShowDisconnectionDialog()) {
       return;
@@ -163,38 +163,17 @@ class RecordController extends GetxController {
   }
 
   //play recording
-  Future<void> playRecording(List<ItemModel> records) async {
+  Future<void> playRecording(List<ItemModel> itens) async {
     resetPosition();
     print("play recordings");
-    List<RecordAbstract> recordsLoaded = _loadRecordItems(records);
-    for (var item in recordsLoaded) {
+    // List<ItemModel> recordsLoaded = _loadRecordItems(records);
+    for (var item in itens) {
       if (isShowDisconnectionDialog() || isRunning == false) {
         resetPosition();
         print("force stop or disconnected.");
         break;
       }
-      await item.execute(connectorService);
+      await item.itemObject?.execute(connectorService);
     }
-  }
-
-  ///pre load item
-  List<RecordAbstract> _loadRecordItems(List<ItemModel> records) {
-    print("load records itens");
-    List<RecordAbstract> itemsLoaded = [];
-    for (var item in records) {
-      if (item.type == ItemRecordEnum.coord.index) {
-        final itemCoord = ItemCoord.fromJson(item.object);
-        itemsLoaded.add(itemCoord);
-      }
-      if (item.type == ItemRecordEnum.delay.index) {
-        final itemDelay = ItemDelay.fromJson(item.object);
-        itemsLoaded.add(itemDelay);
-      }
-      if (item.type == ItemRecordEnum.laser.index) {
-        final itemLaser = ItemLaser.fromJson(item.object);
-        itemsLoaded.add(itemLaser);
-      }
-    }
-    return itemsLoaded;
   }
 }

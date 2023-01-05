@@ -11,9 +11,9 @@ import 'records/record_options.dart';
 
 class RecordModel {
   String? id;
-  final String name;
-  final List<ItemModel> itens;
-  final RecordOptions options;
+  String name;
+  List<ItemModel> itens;
+  RecordOptions options;
 
   RecordModel(this.name, this.itens, this.options, [this.id]) {
     id ??= const Uuid().v4();

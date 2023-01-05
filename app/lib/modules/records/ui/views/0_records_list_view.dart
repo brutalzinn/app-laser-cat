@@ -72,7 +72,12 @@ class RecordListView extends StatelessWidget {
                                   },
                                   child: recordController.isPlay.value
                                       ? const Icon(Icons.stop)
-                                      : const Icon(Icons.play_arrow))
+                                      : const Icon(Icons.play_arrow)),
+                              CustomFloatingActionButton(
+                                  onPressed: () {
+                                    
+                                  },
+                                  child: const Icon(Icons.edit_note_outlined)),
                             ]),
                         title: Text(
                           item.name,
